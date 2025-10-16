@@ -1,6 +1,16 @@
 # Scattiamo in Provincia
 
-**Concorso Fotografico - Città metropolitana di Roma Capitale**
+**Concorso Fotografico - Città metropolitana submissions/
+└── {CODICE_FISCALE}/
+    ├── documenti/
+    │   ├── Allegato1_firmato_{CODICE_FISCALE}.pdf  # OBBLIGATORIO
+    │   └── [documento identità se minorenne]
+    ├── immagini/
+    │   ├── foto1.jpg
+    │   ├── foto2.jpg
+    │   └── ...
+    ├── log.txt          # File con hash MD5 di tutti i file
+    └── dati.json        # Dati partecipante in formato JSONpitale**
 
 Applicazione web moderna per la gestione delle iscrizioni al concorso fotografico "Scattiamo in Provincia", promosso dalla Città metropolitana di Roma Capitale.
 
@@ -11,7 +21,11 @@ Un invito aperto a tutti gli appassionati di fotografia – dilettanti e profess
 ## 🚀 Caratteristiche
 
 - **Landing Page** con presentazione completa del concorso e slogan
+- **Processo a 2 Step** con timeline visuale
 - **Form di Registrazione** con validazione completa
+- **Generazione Automatica PDF** (Allegato 1) precompilato
+- **Upload Allegato 1 Firmato** obbligatorio
+- **Autocomplete Comuni** per standardizzare i dati geografici
 - **Campo Email** per comunicazioni con i partecipanti
 - **Upload Immagini** fino a 24 foto (max 3MB ciascuna)
 - **Gestione Minorenni** con upload obbligatorio del documento
@@ -19,6 +33,22 @@ Un invito aperto a tutti gli appassionati di fotografia – dilettanti e profess
 - **Struttura File System** automatica per ogni partecipante
 - **Hash MD5** per l'integrità dei file
 - **Design Responsive** ottimizzato per mobile e desktop
+
+## 📋 Flusso di Registrazione
+
+### Step 1: Compilazione Dati
+1. L'utente compila il form con i propri dati personali
+2. Seleziona comuni da liste standardizzate (120 comuni della Città metropolitana)
+3. Accetta le dichiarazioni obbligatorie
+4. Il sistema genera automaticamente l'Allegato 1 in PDF
+
+### Step 2: Documenti e Foto
+1. L'utente scarica l'Allegato 1 precompilato
+2. Firma il documento (anche digitalmente)
+3. Carica l'Allegato 1 firmato (obbligatorio)
+4. Se minorenne, carica documento di identità
+5. Carica fino a 24 fotografie
+6. Invia la candidatura completa
 
 ## 📋 Tecnologie Utilizzate
 

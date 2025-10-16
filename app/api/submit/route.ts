@@ -50,7 +50,31 @@ export async function POST(request: NextRequest) {
     // Array per salvare gli hash MD5
     const fileHashes: { filename: string; hash: string; size: number }[] = [];
 
-    // Salva il documento se presente
+    // Salva l'Allegato 1 firmato (OBBLIGATORIO)
+    const allegato1 = formData.get('allegato1') as File | null;
+    if (!allegato1) {
+      return NextResponse.json(
+        { error: 'L\'Allegato 1 firmato è obbligatorio' },
+        { status: 400 }
+      );
+    }
+
+    const allegato1Bytes = await allegato1.arrayBuffer();
+    const allegato1Buffer = Buffer.from(allegato1Bytes);
+    const allegato1Path = join(documentiDir, `Allegato1_firmato_${codiceFiscale}.pdf`);
+    await writeFile(allegato1Path, allegato1Buffer);
+
+    // Calcola MD5 Allegato 1
+    const allegato1WordArray = CryptoJS.lib.WordArray.create(allegato1Buffer);
+    const allegato1Hash = CryptoJS.MD5(allegato1WordArray).toString();
+    
+    fileHashes.push({
+      filename: `documenti/Allegato1_firmato_${codiceFiscale}.pdf`,
+      hash: allegato1Hash,
+      size: allegato1.size,
+    });
+
+    // Salva il documento di identità se presente (per minorenni)
     const documento = formData.get('documento') as File | null;
     if (isMinorenne && documento) {
       const bytes = await documento.arrayBuffer();

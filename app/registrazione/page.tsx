@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 import { ArrowLeft, Upload, X, CheckCircle, Loader2, Download } from 'lucide-react';
 import { generateAllegato1PDF } from '@/utils/generatePDF';
+import AutocompleteInput from '@/components/AutocompleteInput';
+import { tuttiComuni, comuniRomaMetropolitana } from '@/utils/comuni';
 
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
 const MAX_IMAGES = 24;
@@ -46,17 +48,20 @@ const registrationSchema = z.object({
 type RegistrationForm = z.infer<typeof registrationSchema>;
 
 export default function RegistrazionePage() {
+  const [currentStep, setCurrentStep] = useState(1); // 1: Dati, 2: Allegato 1, 3: Foto
   const [images, setImages] = useState<File[]>([]);
   const [documento, setDocumento] = useState<File | null>(null);
+  const [allegato1Firmato, setAllegato1Firmato] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const [submittedData, setSubmittedData] = useState<RegistrationForm | null>(null);
+  const [formData, setFormData] = useState<RegistrationForm | null>(null);
 
   const {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
   } = useForm<RegistrationForm>({
     resolver: zodResolver(registrationSchema),
@@ -124,9 +129,16 @@ export default function RegistrazionePage() {
     setDocumento(null);
   };
 
-  const onSubmit = async (data: RegistrationForm) => {
+  const onSubmitFinal = async () => {
+    if (!formData) return;
+
     if (images.length === 0) {
       alert('Devi caricare almeno una foto!');
+      return;
+    }
+
+    if (!allegato1Firmato) {
+      alert('Devi caricare l\'Allegato 1 firmato!');
       return;
     }
 
@@ -139,30 +151,32 @@ export default function RegistrazionePage() {
     setSubmitError('');
 
     try {
-      const formData = new FormData();
-      formData.append('nome', data.nome);
-      formData.append('cognome', data.cognome);
-      formData.append('email', data.email);
-      formData.append('codiceFiscale', data.codiceFiscale);
-      formData.append('dataNascita', data.dataNascita);
-      formData.append('luogoNascita', data.luogoNascita);
-      formData.append('residenzaComune', data.residenzaComune);
-      formData.append('residenzaIndirizzo', data.residenzaIndirizzo);
-      formData.append('telefono', data.telefono);
-      formData.append('dipendente', data.dipendente);
-      formData.append('isMinorenne', isMinorenne().toString());
+      const submitFormData = new FormData();
+      submitFormData.append('nome', formData.nome);
+      submitFormData.append('cognome', formData.cognome);
+      submitFormData.append('email', formData.email);
+      submitFormData.append('codiceFiscale', formData.codiceFiscale);
+      submitFormData.append('dataNascita', formData.dataNascita);
+      submitFormData.append('luogoNascita', formData.luogoNascita);
+      submitFormData.append('residenzaComune', formData.residenzaComune);
+      submitFormData.append('residenzaIndirizzo', formData.residenzaIndirizzo);
+      submitFormData.append('telefono', formData.telefono);
+      submitFormData.append('dipendente', formData.dipendente);
+      submitFormData.append('isMinorenne', isMinorenne().toString());
 
       images.forEach((image) => {
-        formData.append('images', image);
+        submitFormData.append('images', image);
       });
 
       if (documento) {
-        formData.append('documento', documento);
+        submitFormData.append('documento', documento);
       }
+
+      submitFormData.append('allegato1', allegato1Firmato);
 
       const response = await fetch('/api/submit', {
         method: 'POST',
-        body: formData,
+        body: submitFormData,
       });
 
       const result = await response.json();
@@ -171,8 +185,8 @@ export default function RegistrazionePage() {
         throw new Error(result.error || 'Errore durante l\'invio');
       }
 
-      setSubmittedData(data);
       setSubmitSuccess(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Errore:', error);
       setSubmitError(error instanceof Error ? error.message : 'Errore durante l\'invio del form');
@@ -182,19 +196,59 @@ export default function RegistrazionePage() {
   };
 
   const handleDownloadPDF = () => {
-    if (submittedData) {
-      generateAllegato1PDF(submittedData);
+    if (formData) {
+      generateAllegato1PDF(formData);
     }
+  };
+
+  const handleStep1Submit = (data: RegistrationForm) => {
+    setFormData(data);
+    setCurrentStep(2);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleStep2Submit = () => {
+    if (!allegato1Firmato) {
+      alert('Devi caricare l\'Allegato 1 firmato prima di continuare!');
+      return;
+    }
+    
+    if (isMinorenne() && !documento) {
+      alert('I minorenni devono caricare un documento di identità!');
+      return;
+    }
+
+    setCurrentStep(3);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAllegato1Upload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        alert('Il file deve essere in formato PDF');
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        alert('Il file è troppo grande. Massimo 3MB');
+        return;
+      }
+      setAllegato1Firmato(file);
+    }
+  };
+
+  const removeAllegato1 = () => {
+    setAllegato1Firmato(null);
   };
 
   if (submitSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4 py-12">
         <div className="card max-w-2xl w-full text-center">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold mb-4 text-gray-800">Registrazione Completata!</h1>
+          <h1 className="text-3xl font-bold mb-4 text-gray-800">Candidatura Inviata!</h1>
           <p className="text-gray-600 mb-4">
             La tua candidatura al concorso &quot;Scattiamo in Provincia&quot; è stata inviata con successo.
           </p>
@@ -202,26 +256,15 @@ export default function RegistrazionePage() {
             Riceverai una conferma via email all&apos;indirizzo fornito.
           </p>
 
-          <div className="bg-primary-50 border-2 border-primary-200 rounded-lg p-6 mb-8">
-            <h2 className="text-xl font-bold mb-3 text-primary-900">
-              Scarica l&apos;Allegato 1
-            </h2>
-            <p className="text-primary-800 mb-4">
-              Scarica il modulo precompilato (Allegato 1), firmalo e conservalo per eventuali verifiche.
-            </p>
-            <button
-              onClick={handleDownloadPDF}
-              className="btn-primary inline-flex items-center gap-2"
-            >
-              <Download className="w-5 h-5" />
-              Scarica Allegato 1 (PDF)
-            </button>
-            <p className="text-sm text-primary-700 mt-3">
-              Il PDF è precompilato con i tuoi dati. Dovrai solo firmarlo.
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+            <h3 className="font-bold text-green-900 mb-2">Cosa succede ora?</h3>
+            <p className="text-green-800 text-sm">
+              La Commissione valuterà le fotografie caricate e le migliori saranno selezionate per 
+              l&apos;esposizione a Palazzo Valentini e la pubblicazione sui canali della Città metropolitana.
             </p>
           </div>
 
-          <Link href="/" className="btn-secondary inline-block">
+          <Link href="/" className="btn-primary inline-block">
             Torna alla Home
           </Link>
         </div>
@@ -249,7 +292,49 @@ export default function RegistrazionePage() {
             Compila tutti i campi per partecipare gratuitamente al concorso
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Timeline */}
+          <div className="mb-12">
+            <div className="flex items-center justify-between">
+              {[
+                { num: 1, title: 'Dati Personali', desc: 'Compila il modulo' },
+                { num: 2, title: 'Firma Liberatorie', desc: 'Allegato 1 firmato' },
+                { num: 3, title: 'Carica Foto', desc: 'Le tue fotografie' },
+              ].map((step, index) => (
+                <div key={step.num} className="flex items-center flex-1">
+                  <div className="flex flex-col items-center flex-1">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
+                        currentStep >= step.num
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-gray-200 text-gray-500'
+                      }`}
+                    >
+                      {currentStep > step.num ? <CheckCircle className="w-6 h-6" /> : step.num}
+                    </div>
+                    <p
+                      className={`mt-2 text-sm font-semibold ${
+                        currentStep >= step.num ? 'text-primary-600' : 'text-gray-500'
+                      }`}
+                    >
+                      {step.title}
+                    </p>
+                    <p className="text-xs text-gray-500">{step.desc}</p>
+                  </div>
+                  {index < 2 && (
+                    <div
+                      className={`h-1 flex-1 mx-4 transition-all ${
+                        currentStep > step.num ? 'bg-primary-600' : 'bg-gray-200'
+                      }`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Step 1: Dati Personali */}
+          {currentStep === 1 && (
+            <form onSubmit={handleSubmit(handleStep1Submit)} className="space-y-6">
             {/* Dati Personali */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
@@ -288,16 +373,21 @@ export default function RegistrazionePage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="label">Luogo di Nascita *</label>
-                <input
-                  type="text"
-                  {...register('luogoNascita')}
-                  className="input-field"
-                  placeholder="Roma"
+                <Controller
+                  name="luogoNascita"
+                  control={control}
+                  render={({ field }) => (
+                    <AutocompleteInput
+                      label="Luogo di Nascita"
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                      options={tuttiComuni}
+                      placeholder="Inizia a digitare..."
+                      error={errors.luogoNascita?.message}
+                      required
+                    />
+                  )}
                 />
-                {errors.luogoNascita && (
-                  <p className="error-message">{errors.luogoNascita.message}</p>
-                )}
               </div>
 
               <div>
@@ -314,16 +404,21 @@ export default function RegistrazionePage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="label">Comune di Residenza *</label>
-                <input
-                  type="text"
-                  {...register('residenzaComune')}
-                  className="input-field"
-                  placeholder="Roma"
+                <Controller
+                  name="residenzaComune"
+                  control={control}
+                  render={({ field }) => (
+                    <AutocompleteInput
+                      label="Comune di Residenza"
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                      options={comuniRomaMetropolitana}
+                      placeholder="Seleziona un comune..."
+                      error={errors.residenzaComune?.message}
+                      required
+                    />
+                  )}
                 />
-                {errors.residenzaComune && (
-                  <p className="error-message">{errors.residenzaComune.message}</p>
-                )}
               </div>
 
               <div>
@@ -407,49 +502,6 @@ export default function RegistrazionePage() {
               </div>
             </div>
 
-            {/* Documento per Minorenni */}
-            {isMinorenne() && (
-              <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
-                <h3 className="font-bold text-lg mb-2 text-yellow-900">
-                  Documento di Identità Richiesto
-                </h3>
-                <p className="text-yellow-800 mb-4">
-                  Essendo minorenne, è necessario caricare un documento di identità.
-                </p>
-
-                <div>
-                  <label className="label">Carica Documento * (PDF o Immagine, max 3MB)</label>
-                  {!documento ? (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-yellow-300 rounded-lg cursor-pointer hover:bg-yellow-50 transition-colors">
-                      <Upload className="w-8 h-8 text-yellow-600 mb-2" />
-                      <span className="text-sm text-yellow-700 font-medium">
-                        Clicca per caricare
-                      </span>
-                      <input
-                        type="file"
-                        onChange={handleDocumentoUpload}
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        className="hidden"
-                      />
-                    </label>
-                  ) : (
-                    <div className="flex items-center justify-between bg-yellow-100 p-4 rounded-lg">
-                      <span className="text-sm font-medium text-yellow-900 truncate">
-                        {documento.name}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={removeDocumento}
-                        className="text-yellow-700 hover:text-yellow-900"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
             {/* Dichiarazioni */}
             <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-6 space-y-4">
               <h3 className="font-bold text-lg text-gray-800 mb-4">Dichiarazioni Obbligatorie</h3>
@@ -519,79 +571,248 @@ export default function RegistrazionePage() {
               )}
             </div>
 
-            {/* Upload Immagini */}
-            <div>
-              <label className="label">
-                Carica le tue Foto * (max {MAX_IMAGES}, 3MB ciascuna)
-              </label>
-              <p className="text-sm text-gray-600 mb-4">
-                Hai caricato {images.length} di {MAX_IMAGES} foto
-              </p>
-
-              {images.length < MAX_IMAGES && (
-                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-primary-300 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors mb-4">
-                  <Upload className="w-10 h-10 text-primary-600 mb-2" />
-                  <span className="text-sm text-primary-700 font-medium">
-                    Clicca per caricare le foto
-                  </span>
-                  <span className="text-xs text-gray-500 mt-1">JPG, PNG o WebP</span>
-                  <input
-                    type="file"
-                    onChange={handleImageUpload}
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    multiple
-                    className="hidden"
-                  />
-                </label>
-              )}
-
-              {images.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {images.map((image, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt={`Preview ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                      <p className="text-xs text-gray-600 mt-1 truncate">{image.name}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {submitError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {submitError}
-              </div>
-            )}
-
-            {/* Submit Button */}
+            {/* Submit Button Step 1 */}
             <div className="flex gap-4 pt-4">
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary flex-1"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Invio in corso...
-                  </>
-                ) : (
-                  'Invia Candidatura'
-                )}
+                Continua allo Step 2
               </button>
             </div>
           </form>
+          )}
+
+          {/* Step 2: Allegato 1 e Documenti */}
+          {currentStep === 2 && (
+            <div className="space-y-6">
+              {/* Riepilogo Dati */}
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h3 className="font-bold text-gray-800 mb-2">Riepilogo Dati</h3>
+                <div className="text-sm text-gray-600 grid grid-cols-2 gap-2">
+                  <p><strong>Nome:</strong> {formData?.nome} {formData?.cognome}</p>
+                  <p><strong>Email:</strong> {formData?.email}</p>
+                  <p><strong>Codice Fiscale:</strong> {formData?.codiceFiscale}</p>
+                  <p><strong>Residenza:</strong> {formData?.residenzaComune}</p>
+                </div>
+                <button
+                  onClick={() => setCurrentStep(1)}
+                  className="text-primary-600 hover:text-primary-700 text-sm font-semibold mt-3"
+                >
+                  Modifica dati
+                </button>
+              </div>
+
+              {/* Scarica Allegato 1 */}
+              <div className="bg-primary-50 border-2 border-primary-200 rounded-lg p-6">
+                <h3 className="font-bold text-lg text-primary-900 mb-3">
+                  1. Scarica e Firma l&apos;Allegato 1
+                </h3>
+                <p className="text-primary-800 mb-4">
+                  Clicca sul pulsante per scaricare l&apos;Allegato 1 precompilato con i tuoi dati. 
+                  Firmalo (anche digitalmente) e ricaricalo qui sotto.
+                </p>
+                <button
+                  onClick={handleDownloadPDF}
+                  className="btn-primary inline-flex items-center gap-2"
+                >
+                  <Download className="w-5 h-5" />
+                  Scarica Allegato 1 da Firmare
+                </button>
+              </div>
+
+              {/* Upload Allegato 1 Firmato */}
+              <div>
+                <label className="label">2. Carica l&apos;Allegato 1 Firmato * (PDF, max 3MB)</label>
+                {!allegato1Firmato ? (
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-primary-300 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
+                    <Upload className="w-8 h-8 text-primary-600 mb-2" />
+                    <span className="text-sm text-primary-700 font-medium">
+                      Clicca per caricare l&apos;Allegato 1 firmato
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">Solo PDF</span>
+                    <input
+                      type="file"
+                      onChange={handleAllegato1Upload}
+                      accept=".pdf"
+                      className="hidden"
+                    />
+                  </label>
+                ) : (
+                  <div className="flex items-center justify-between bg-green-50 border border-green-200 p-4 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                      <span className="text-sm font-medium text-green-900">
+                        {allegato1Firmato.name}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={removeAllegato1}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Documento per Minorenni */}
+              {isMinorenne() && (
+                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
+                  <h3 className="font-bold text-lg mb-2 text-yellow-900">
+                    3. Documento di Identità (Minorenni)
+                  </h3>
+                  <p className="text-yellow-800 mb-4">
+                    Essendo minorenne, è necessario caricare un documento di identità.
+                  </p>
+
+                  {!documento ? (
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-yellow-300 rounded-lg cursor-pointer hover:bg-yellow-50 transition-colors">
+                      <Upload className="w-8 h-8 text-yellow-600 mb-2" />
+                      <span className="text-sm text-yellow-700 font-medium">
+                        Clicca per caricare
+                      </span>
+                      <input
+                        type="file"
+                        onChange={handleDocumentoUpload}
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        className="hidden"
+                      />
+                    </label>
+                  ) : (
+                    <div className="flex items-center justify-between bg-yellow-100 p-4 rounded-lg">
+                      <span className="text-sm font-medium text-yellow-900 truncate">
+                        {documento.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={removeDocumento}
+                        className="text-yellow-700 hover:text-yellow-900"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Submit Buttons Step 2 */}
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => setCurrentStep(1)}
+                  className="btn-secondary"
+                >
+                  Torna Indietro
+                </button>
+                <button
+                  onClick={handleStep2Submit}
+                  disabled={!allegato1Firmato}
+                  className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Continua allo Step 3
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Upload Foto */}
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              {/* Info completamento steps precedenti */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-bold text-green-900 mb-1">Dati e Documenti Completati</h3>
+                    <p className="text-sm text-green-800">
+                      Hai completato la registrazione e caricato l&apos;Allegato 1 firmato.
+                      Ora carica le tue fotografie per completare la candidatura.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Upload Immagini */}
+              <div>
+                <label className="label">
+                  Carica le tue Foto * (max {MAX_IMAGES}, 3MB ciascuna)
+                </label>
+                <p className="text-sm text-gray-600 mb-4">
+                  Hai caricato {images.length} di {MAX_IMAGES} foto
+                </p>
+
+                {images.length < MAX_IMAGES && (
+                  <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-primary-300 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors mb-4">
+                    <Upload className="w-10 h-10 text-primary-600 mb-2" />
+                    <span className="text-sm text-primary-700 font-medium">
+                      Clicca per caricare le foto
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">JPG, PNG o WebP</span>
+                    <input
+                      type="file"
+                      onChange={handleImageUpload}
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      multiple
+                      className="hidden"
+                    />
+                  </label>
+                )}
+
+                {images.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {images.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={`Preview ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                        <p className="text-xs text-gray-600 mt-1 truncate">{image.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {submitError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                  {submitError}
+                </div>
+              )}
+
+              {/* Submit Buttons Step 3 */}
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => setCurrentStep(2)}
+                  className="btn-secondary"
+                >
+                  Torna Indietro
+                </button>
+                <button
+                  onClick={onSubmitFinal}
+                  disabled={isSubmitting || images.length === 0}
+                  className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Invio in corso...
+                    </>
+                  ) : (
+                    'Invia Candidatura'
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </main>
