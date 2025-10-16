@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { getSessoFromCF } from './codiceFiscale';
 
 interface PartecipanteData {
   nome: string;
@@ -19,6 +20,10 @@ export function generateAllegato1PDF(data: PartecipanteData): void {
   const margin = 20;
   const lineHeight = 7;
   let y = 20;
+
+  // Estrai il sesso dal codice fiscale
+  const sesso = getSessoFromCF(data.codiceFiscale);
+  const articolo = sesso === 'F' ? 'La sottoscritta' : 'Il sottoscritto';
 
   // Helper function to add text
   const addText = (text: string, x: number, yPos: number, options?: any) => {
@@ -46,7 +51,7 @@ export function generateAllegato1PDF(data: PartecipanteData): void {
   doc.setFontSize(11);
   
   const nomeCompleto = `${data.nome} ${data.cognome}`;
-  addText(`Il sottoscritto/La sottoscritta: ${nomeCompleto}`, margin, y);
+  addText(`${articolo}: ${nomeCompleto}`, margin, y);
   y += lineHeight * 1.5;
 
   addText(`Nato/a a: ${data.luogoNascita} il ${new Date(data.dataNascita).toLocaleDateString('it-IT')}`, margin, y);

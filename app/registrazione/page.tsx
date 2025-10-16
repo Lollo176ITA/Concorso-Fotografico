@@ -1,14 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
-import { ArrowLeft, Upload, X, CheckCircle, Loader2, Download } from 'lucide-react';
+import { ArrowLeft, Upload, X, CheckCircle, Loader2, Download, AlertCircle } from 'lucide-react';
 import { generateAllegato1PDF } from '@/utils/generatePDF';
 import AutocompleteInput from '@/components/AutocompleteInput';
 import { tuttiComuni, comuniRomaMetropolitana } from '@/utils/comuni';
+import { 
+  estraiDatiCodiceFiscale, 
+  verificaDatiCodiceFiscale,
+  getSessoFromCF,
+  getDataNascitaFromCF
+} from '@/utils/codiceFiscale';
 
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
 const MAX_IMAGES = 24;
@@ -56,18 +62,27 @@ export default function RegistrazionePage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [formData, setFormData] = useState<RegistrationForm | null>(null);
+  const [cfWarnings, setCfWarnings] = useState<string[]>([]);
+  const [cfInfo, setCfInfo] = useState<{sesso: string | null, dataNascita: string | null, comune: string | null}>({
+    sesso: null,
+    dataNascita: null,
+    comune: null
+  });
 
   const {
     register,
     handleSubmit,
     watch,
     control,
+    setValue,
     formState: { errors },
   } = useForm<RegistrationForm>({
     resolver: zodResolver(registrationSchema),
   });
 
   const dataNascita = watch('dataNascita');
+  const codiceFiscale = watch('codiceFiscale');
+  const luogoNascita = watch('luogoNascita');
 
   // Calcola se è minorenne
   const isMinorenne = () => {
@@ -241,6 +256,42 @@ export default function RegistrazionePage() {
     setAllegato1Firmato(null);
   };
 
+  // Effetto per la validazione del codice fiscale in tempo reale
+  useEffect(() => {
+    if (codiceFiscale && codiceFiscale.length === 16) {
+      const datiCF = estraiDatiCodiceFiscale(codiceFiscale);
+      
+      if (datiCF.valid) {
+        const sessoLabel = datiCF.sesso === 'M' ? 'Maschio' : datiCF.sesso === 'F' ? 'Femmina' : null;
+        setCfInfo({ 
+          sesso: sessoLabel, 
+          dataNascita: datiCF.dataNascita, 
+          comune: null 
+        });
+
+        // Auto-compila la data di nascita se non è già impostata
+        if (datiCF.dataNascita && !dataNascita) {
+          setValue('dataNascita', datiCF.dataNascita);
+        }
+
+        // Verifica congruenza dati
+        const warnings: string[] = [];
+        if (dataNascita && datiCF.dataNascita && datiCF.dataNascita !== dataNascita) {
+          const dataFormattata = new Date(datiCF.dataNascita).toLocaleDateString('it-IT');
+          warnings.push(`⚠️ La data di nascita inserita non corrisponde al CF (dal CF: ${dataFormattata})`);
+        }
+
+        setCfWarnings(warnings);
+      } else {
+        setCfWarnings(datiCF.errors.map(err => `❌ ${err}`));
+        setCfInfo({ sesso: null, dataNascita: null, comune: null });
+      }
+    } else {
+      setCfWarnings([]);
+      setCfInfo({ sesso: null, dataNascita: null, comune: null });
+    }
+  }, [codiceFiscale, dataNascita, setValue]);
+
   if (submitSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-12">
@@ -294,41 +345,83 @@ export default function RegistrazionePage() {
 
           {/* Timeline */}
           <div className="mb-12">
-            <div className="flex items-center justify-between">
-              {[
-                { num: 1, title: 'Dati Personali', desc: 'Compila il modulo' },
-                { num: 2, title: 'Firma Liberatorie', desc: 'Allegato 1 firmato' },
-                { num: 3, title: 'Carica Foto', desc: 'Le tue fotografie' },
-              ].map((step, index) => (
-                <div key={step.num} className="flex items-center flex-1">
-                  <div className="flex flex-col items-center flex-1">
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
-                        currentStep >= step.num
-                          ? 'bg-primary-600 text-white'
-                          : 'bg-gray-200 text-gray-500'
-                      }`}
-                    >
-                      {currentStep > step.num ? <CheckCircle className="w-6 h-6" /> : step.num}
-                    </div>
-                    <p
-                      className={`mt-2 text-sm font-semibold ${
-                        currentStep >= step.num ? 'text-primary-600' : 'text-gray-500'
-                      }`}
-                    >
-                      {step.title}
-                    </p>
-                    <p className="text-xs text-gray-500">{step.desc}</p>
-                  </div>
-                  {index < 2 && (
-                    <div
-                      className={`h-1 flex-1 mx-4 transition-all ${
-                        currentStep > step.num ? 'bg-primary-600' : 'bg-gray-200'
-                      }`}
-                    />
-                  )}
+            <div className="flex items-center">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center">
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
+                    currentStep >= 1
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-200 text-gray-500'
+                  }`}
+                >
+                  {currentStep > 1 ? <CheckCircle className="w-6 h-6" /> : 1}
                 </div>
-              ))}
+                <p
+                  className={`mt-2 text-sm font-semibold ${
+                    currentStep >= 1 ? 'text-primary-600' : 'text-gray-500'
+                  }`}
+                >
+                  Dati Personali
+                </p>
+                <p className="text-xs text-gray-500">Compila il modulo</p>
+              </div>
+
+              {/* Linea 1 */}
+              <div
+                className={`h-1 flex-1 mx-4 transition-all ${
+                  currentStep > 1 ? 'bg-primary-600' : 'bg-gray-200'
+                }`}
+              />
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center">
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
+                    currentStep >= 2
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-200 text-gray-500'
+                  }`}
+                >
+                  {currentStep > 2 ? <CheckCircle className="w-6 h-6" /> : 2}
+                </div>
+                <p
+                  className={`mt-2 text-sm font-semibold ${
+                    currentStep >= 2 ? 'text-primary-600' : 'text-gray-500'
+                  }`}
+                >
+                  Firma Liberatorie
+                </p>
+                <p className="text-xs text-gray-500">Allegato 1 firmato</p>
+              </div>
+
+              {/* Linea 2 */}
+              <div
+                className={`h-1 flex-1 mx-4 transition-all ${
+                  currentStep > 2 ? 'bg-primary-600' : 'bg-gray-200'
+                }`}
+              />
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center">
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
+                    currentStep >= 3
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-200 text-gray-500'
+                  }`}
+                >
+                  {currentStep > 3 ? <CheckCircle className="w-6 h-6" /> : 3}
+                </div>
+                <p
+                  className={`mt-2 text-sm font-semibold ${
+                    currentStep >= 3 ? 'text-primary-600' : 'text-gray-500'
+                  }`}
+                >
+                  Carica Foto
+                </p>
+                <p className="text-xs text-gray-500">Le tue fotografie</p>
+              </div>
             </div>
           </div>
 
@@ -486,6 +579,36 @@ export default function RegistrazionePage() {
                 {errors.codiceFiscale && (
                   <p className="error-message">{errors.codiceFiscale.message}</p>
                 )}
+                
+                {/* Info estratte dal CF */}
+                {cfInfo.sesso && (
+                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-xs font-semibold text-blue-900 mb-1">
+                      Dati estratti dal Codice Fiscale:
+                    </p>
+                    <div className="text-xs text-blue-800 space-y-1">
+                      {cfInfo.sesso && <p>• Sesso: {cfInfo.sesso}</p>}
+                      {cfInfo.dataNascita && (
+                        <p>• Data di nascita: {new Date(cfInfo.dataNascita).toLocaleDateString('it-IT')}</p>
+                      )}
+                      {cfInfo.comune && <p>• Comune di nascita: {cfInfo.comune}</p>}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Warning se dati non corrispondono */}
+                {cfWarnings.length > 0 && (
+                  <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-xs text-yellow-800 space-y-1">
+                        {cfWarnings.map((warning, index) => (
+                          <p key={index}>{warning}</p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -498,6 +621,12 @@ export default function RegistrazionePage() {
                 />
                 {errors.dataNascita && (
                   <p className="error-message">{errors.dataNascita.message}</p>
+                )}
+                {cfInfo.dataNascita && dataNascita === cfInfo.dataNascita && (
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" />
+                    Corrispondente al codice fiscale
+                  </p>
                 )}
               </div>
             </div>
