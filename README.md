@@ -1,11 +1,18 @@
-# Concorso Fotografico 2025
+# Scattiamo in Provincia
 
-Applicazione web moderna per la gestione delle iscrizioni al concorso fotografico.
+**Concorso Fotografico - Città metropolitana di Roma Capitale**
+
+Applicazione web moderna per la gestione delle iscrizioni al concorso fotografico "Scattiamo in Provincia", promosso dalla Città metropolitana di Roma Capitale.
+
+## 📸 Il Concorso
+
+Un invito aperto a tutti gli appassionati di fotografia – dilettanti e professionisti – a raccontare attraverso le immagini la ricchezza e la varietà del territorio metropolitano. Borghi, paesaggi, mestieri, sapori, tradizioni, monumenti: 120 Comuni che compongono un mosaico di storia e identità.
 
 ## 🚀 Caratteristiche
 
-- **Landing Page** accattivante con presentazione del concorso
-- **Form di Registrazione** completo con validazione
+- **Landing Page** con presentazione completa del concorso e slogan
+- **Form di Registrazione** con validazione completa
+- **Campo Email** per comunicazioni con i partecipanti
 - **Upload Immagini** fino a 24 foto (max 3MB ciascuna)
 - **Gestione Minorenni** con upload obbligatorio del documento
 - **Validazione Dati** in tempo reale con Zod
@@ -107,6 +114,7 @@ colors: {
 ### Campi Obbligatori:
 - Nome (min 2 caratteri)
 - Cognome (min 2 caratteri)
+- Email (formato valido)
 - Codice Fiscale (esattamente 16 caratteri)
 - Data di Nascita
 - Almeno 1 foto (max 24)
@@ -130,6 +138,12 @@ npm start
 
 Oppure usa piattaforme come Vercel, Netlify, o deploy su un server Node.js.
 
+## 🏛️ Organizzatore
+
+**Città metropolitana di Roma Capitale**
+
+Concorso "Scattiamo in Provincia" - Prima Edizione 2025
+
 ## 📄 Licenza
 
-© 2025 Concorso Fotografico. Tutti i diritti riservati.
+© 2025 Città metropolitana di Roma Capitale. Tutti i diritti riservati.

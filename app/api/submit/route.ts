@@ -10,12 +10,18 @@ export async function POST(request: NextRequest) {
     // Estrai i dati
     const nome = formData.get('nome') as string;
     const cognome = formData.get('cognome') as string;
+    const email = formData.get('email') as string;
     const codiceFiscale = (formData.get('codiceFiscale') as string).toUpperCase();
     const dataNascita = formData.get('dataNascita') as string;
+    const luogoNascita = formData.get('luogoNascita') as string;
+    const residenzaComune = formData.get('residenzaComune') as string;
+    const residenzaIndirizzo = formData.get('residenzaIndirizzo') as string;
+    const telefono = formData.get('telefono') as string;
+    const dipendente = formData.get('dipendente') as string;
     const isMinorenne = formData.get('isMinorenne') === 'true';
 
     // Validazione base
-    if (!nome || !cognome || !codiceFiscale || !dataNascita) {
+    if (!nome || !cognome || !email || !codiceFiscale || !dataNascita || !luogoNascita || !residenzaComune || !residenzaIndirizzo || !telefono || !dipendente) {
       return NextResponse.json(
         { error: 'Tutti i campi sono obbligatori' },
         { status: 400 }
@@ -95,16 +101,22 @@ export async function POST(request: NextRequest) {
     // Crea il file log con gli hash MD5
     const timestamp = new Date().toISOString();
     let logContent = `=================================================
-CONCORSO FOTOGRAFICO 2025 - LOG PARTECIPANTE
+SCATTIAMO IN PROVINCIA - LOG PARTECIPANTE
+Concorso Fotografico - Città metropolitana di Roma Capitale
 =================================================
 
 DATI PARTECIPANTE:
 ------------------
 Nome: ${nome}
 Cognome: ${cognome}
+Email: ${email}
 Codice Fiscale: ${codiceFiscale}
 Data di Nascita: ${dataNascita}
+Luogo di Nascita: ${luogoNascita}
+Residenza: ${residenzaComune}, ${residenzaIndirizzo}
+Telefono: ${telefono}
 Minorenne: ${isMinorenne ? 'Sì' : 'No'}
+Dipendente: ${dipendente === 'no' ? 'No' : dipendente === 'cittametropolitana' ? 'Città metropolitana di Roma Capitale' : 'Capitale Lavoro SpA'}
 
 DATA E ORA INVIO:
 -----------------
@@ -133,11 +145,19 @@ Totale file: ${fileHashes.length}
 
     // Crea anche un file JSON con i dati
     const jsonData = {
+      concorso: 'Scattiamo in Provincia',
+      organizzatore: 'Città metropolitana di Roma Capitale',
       partecipante: {
         nome,
         cognome,
+        email,
         codiceFiscale,
         dataNascita,
+        luogoNascita,
+        residenzaComune,
+        residenzaIndirizzo,
+        telefono,
+        dipendente,
         isMinorenne,
       },
       timestamp,

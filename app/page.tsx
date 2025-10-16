@@ -15,14 +15,83 @@ export default function Home() {
               <Camera className="w-10 h-10" />
             </div>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-              Concorso Fotografico 2025
+              Scattiamo in Provincia
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-primary-100 max-w-3xl mx-auto">
-              Cattura l&apos;essenza del momento. Condividi la tua visione. Vinci premi straordinari.
+            <p className="text-xl md:text-2xl mb-4 text-primary-100 max-w-3xl mx-auto font-semibold">
+              Borghi, luci, storia: la provincia si racconta in uno scatto
+            </p>
+            <p className="text-lg md:text-xl mb-8 text-primary-50 max-w-3xl mx-auto">
+              Un concorso fotografico per raccontare il territorio metropolitano
             </p>
             <Link href="/registrazione" className="btn-primary inline-block text-lg">
-              Iscriviti Ora
+              Partecipa Gratuitamente
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-8 text-gray-800">
+            Il Concorso
+          </h2>
+          <div className="prose prose-lg max-w-none text-gray-700 space-y-4">
+            <p className="text-lg leading-relaxed">
+              La <strong>Città metropolitana di Roma Capitale</strong> promuove la prima edizione del concorso fotografico 
+              <strong> &quot;Scattiamo in Provincia&quot;</strong>, un invito aperto a tutti gli appassionati di fotografia – 
+              dilettanti e professionisti – a raccontare attraverso le immagini la ricchezza e la varietà del territorio metropolitano.
+            </p>
+            <p className="text-lg leading-relaxed">
+              <strong>Borghi, paesaggi, mestieri, sapori, tradizioni, monumenti:</strong> 120 Comuni che compongono un mosaico 
+              di storia e identità, di natura e cultura. Ogni partecipante potrà immortalare scorci e atmosfere capaci di 
+              restituire l&apos;anima autentica delle nostre comunità.
+            </p>
+            <p className="text-lg leading-relaxed">
+              Le sezioni del concorso spaziano dal <strong>tema libero</strong> ai <strong>paesaggi</strong>, dalle <strong>arti 
+              e mestieri</strong> all&apos;<strong>enogastronomia</strong>, fino a <strong>piazze e monumenti</strong>.
+            </p>
+            <p className="text-lg leading-relaxed">
+              Le fotografie più rappresentative saranno selezionate da una Commissione e saranno <strong>esposte in mostre 
+              fotografiche presso Palazzo Valentini</strong> e altre sedi istituzionali, oltre a essere pubblicate sui canali 
+              digitali della Città metropolitana, contribuendo alla promozione del nuovo portale turistico dedicato al territorio.
+            </p>
+            <div className="bg-primary-50 border-l-4 border-primary-600 p-6 my-8">
+              <p className="text-lg font-semibold text-primary-900 mb-2">
+                La partecipazione è gratuita e aperta anche ai minorenni (con autorizzazione dei genitori).
+              </p>
+              <p className="text-primary-800 italic">
+                Scattare, partecipare, raccontare: ogni fotografia è un gesto di amore verso la nostra provincia.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Slogan Carousel Section */}
+      <section className="py-16 px-4 bg-gradient-to-br from-primary-50 to-primary-100">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+              <p className="text-primary-800 text-lg font-medium italic">
+                &quot;Centoventi Comuni, mille sguardi, una sola Città metropolitana&quot;
+              </p>
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+              <p className="text-primary-800 text-lg font-medium italic">
+                &quot;Dove finisce Roma, inizia un racconto da fotografare&quot;
+              </p>
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+              <p className="text-primary-800 text-lg font-medium italic">
+                &quot;Dai colli ai borghi, un click per valorizzare il territorio&quot;
+              </p>
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
+              <p className="text-primary-800 text-lg font-medium italic">
+                &quot;Un click per scoprire la bellezza della Città metropolitana&quot;
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -39,9 +108,9 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Award className="w-8 h-8 text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-800">Premi Esclusivi</h3>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">Esposizione e Visibilità</h3>
               <p className="text-gray-600">
-                Vinci premi straordinari e ottieni riconoscimenti per il tuo talento fotografico.
+                Le tue foto saranno esposte a Palazzo Valentini e pubblicate sui canali ufficiali della Città metropolitana.
               </p>
             </div>
 
@@ -49,9 +118,9 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Users className="w-8 h-8 text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-800">Community Creativa</h3>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">Valorizza il Territorio</h3>
               <p className="text-gray-600">
-                Entra a far parte di una community di fotografi appassionati e condividi la tua arte.
+                Contribuisci alla promozione del territorio metropolitano e racconta la bellezza dei nostri borghi.
               </p>
             </div>
 
@@ -59,9 +128,9 @@ export default function Home() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Image className="w-8 h-8 text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-800">Mostra il Tuo Talento</h3>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">Partecipazione Gratuita</h3>
               <p className="text-gray-600">
-                Carica fino a 24 foto e lascia che le tue opere parlino per te.
+                Carica fino a 24 foto gratuitamente. Aperto a dilettanti, professionisti e minorenni.
               </p>
             </div>
           </div>
@@ -81,9 +150,9 @@ export default function Home() {
                 1
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2 text-gray-800">Registrati</h3>
+                <h3 className="font-bold text-lg mb-2 text-gray-800">Registrati Gratuitamente</h3>
                 <p className="text-gray-600">
-                  Compila il modulo di registrazione con i tuoi dati personali.
+                  Compila il modulo di registrazione con i tuoi dati personali e indirizzo email.
                 </p>
               </div>
             </div>
@@ -93,9 +162,9 @@ export default function Home() {
                 2
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2 text-gray-800">Carica le Foto</h3>
+                <h3 className="font-bold text-lg mb-2 text-gray-800">Carica le tue Fotografie</h3>
                 <p className="text-gray-600">
-                  Seleziona fino a 24 delle tue migliori fotografie (max 3MB ciascuna).
+                  Seleziona fino a 24 delle tue migliori fotografie che raccontano il territorio metropolitano (max 3MB ciascuna).
                 </p>
               </div>
             </div>
@@ -105,9 +174,9 @@ export default function Home() {
                 3
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2 text-gray-800">Invia e Attendi</h3>
+                <h3 className="font-bold text-lg mb-2 text-gray-800">Invia la Candidatura</h3>
                 <p className="text-gray-600">
-                  Invia la tua candidatura e attendi l&apos;annuncio dei vincitori!
+                  Completa l&apos;invio e le tue foto potrebbero essere esposte a Palazzo Valentini e sui canali della Città metropolitana!
                 </p>
               </div>
             </div>
@@ -115,7 +184,7 @@ export default function Home() {
 
           <div className="text-center mt-12">
             <Link href="/registrazione" className="btn-primary inline-block">
-              Inizia Ora
+              Partecipa al Concorso
             </Link>
           </div>
         </div>
@@ -124,8 +193,14 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8 px-4">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-gray-400">
-            © 2025 Concorso Fotografico. Tutti i diritti riservati.
+          <p className="text-gray-300 mb-2 font-semibold">
+            Scattiamo in Provincia
+          </p>
+          <p className="text-gray-400 text-sm">
+            Città metropolitana di Roma Capitale
+          </p>
+          <p className="text-gray-500 text-sm mt-4">
+            © 2025 Tutti i diritti riservati
           </p>
         </div>
       </footer>
