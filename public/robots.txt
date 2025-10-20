@@ -1,4 +1,4 @@
-# robots.txt per concorso.cittametropolitanaroma.it
+# robots.txt per concorso.capitalelavoro.it
 
 User-agent: *
 Allow: /
@@ -6,4 +6,4 @@ Disallow: /api/
 Disallow: /submissions/
 
 # Sitemap
-Sitemap: https://concorso.cittametropolitanaroma.it/sitemap.xml
+Sitemap: https://concorso.capitalelavoro.it/sitemap.xml

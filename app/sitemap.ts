@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
  
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://concorso.cittametropolitanaroma.it'
+  const baseUrl = 'https://concorso.capitalelavoro.it'
   
   return [
     {

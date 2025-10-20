@@ -8,7 +8,7 @@ module.exports = {
     env: {
       NODE_ENV: 'production',
       PORT: 3000,
-      NEXT_PUBLIC_SITE_URL: 'https://concorso.cittametropolitanaroma.it'
+      NEXT_PUBLIC_SITE_URL: 'https://concorso.capitalelavoro.it'
     },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
