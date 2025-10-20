@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Camera, Award, Users, Image } from 'lucide-react';
+import DynamicSlogans from '@/components/DynamicSlogans';
 
 export default function Home() {
   return (
@@ -68,33 +69,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Slogan Carousel Section */}
-      <section className="py-16 px-4 bg-gradient-to-br from-primary-50 to-primary-100">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
-              <p className="text-primary-800 text-lg font-medium italic">
-                &quot;Centoventi Comuni, mille sguardi, una sola Città metropolitana&quot;
-              </p>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
-              <p className="text-primary-800 text-lg font-medium italic">
-                &quot;Dove finisce Roma, inizia un racconto da fotografare&quot;
-              </p>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
-              <p className="text-primary-800 text-lg font-medium italic">
-                &quot;Dai colli ai borghi, un click per valorizzare il territorio&quot;
-              </p>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
-              <p className="text-primary-800 text-lg font-medium italic">
-                &quot;Un click per scoprire la bellezza della Città metropolitana&quot;
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Dynamic Slogans Section - PAZZO! 🚀 */}
+      <DynamicSlogans />
 
       {/* Features Section */}
       <section className="py-20 px-4">

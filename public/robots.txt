@@ -1,0 +1,9 @@
+# robots.txt per concorso.cittametropolitanaroma.it
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /submissions/
+
+# Sitemap
+Sitemap: https://concorso.cittametropolitanaroma.it/sitemap.xml
