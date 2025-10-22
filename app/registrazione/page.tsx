@@ -216,6 +216,11 @@ export default function RegistrazionePage() {
   };
 
   const handleStep1Submit = (data: RegistrationForm) => {
+    // Verifica che il codice fiscale non abbia errori
+    if (cfWarnings.length > 0) {
+      return;
+    }
+    
     setFormData(data);
     setCurrentStep(2);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -528,16 +533,47 @@ export default function RegistrazionePage() {
               </div>
             </div>
 
-            <div className="mb-3">
-              <label className="form-label fw-semibold">Email *</label>
-              <input
-                type="email"
-                {...register('email')}
-                className="form-control"
-                placeholder="mario.rossi@example.com"
-              />
-              {errors.email && <p className="text-danger small mt-1">{errors.email.message}</p>}
+            <div className="row g-3 mb-3">
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Email *</label>
+                <input
+                  type="email"
+                  {...register('email')}
+                  className="form-control"
+                  placeholder="mario.rossi@example.com"
+                />
+                {errors.email && <p className="text-danger small mt-1">{errors.email.message}</p>}
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Codice Fiscale *</label>
+                <input
+                  type="text"
+                  {...register('codiceFiscale')}
+                  className="form-control text-uppercase"
+                  placeholder="RSSMRA85M01H501Z"
+                  maxLength={16}
+                />
+                {errors.codiceFiscale && (
+                  <p className="text-danger small mt-1">{errors.codiceFiscale.message}</p>
+                )}
+                
+                {/* Errori del codice fiscale */}
+                {cfWarnings.length > 0 && (
+                  <div className="mt-1">
+                    {cfWarnings.map((warning, index) => (
+                      <p key={index} className="text-danger small mb-1">{warning}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Data di nascita nascosta - calcolata automaticamente dal CF */}
+            <input
+              type="hidden"
+              {...register('dataNascita')}
+            />
 
             <div className="row g-3 mb-3">
               <div className="col-md-6">
@@ -644,55 +680,6 @@ export default function RegistrazionePage() {
                 </div>
               </div>
               {errors.dipendente && <p className="text-danger small mt-1">{errors.dipendente.message}</p>}
-            </div>
-
-            <div className="row g-3 mb-3">
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">Codice Fiscale *</label>
-                <input
-                  type="text"
-                  {...register('codiceFiscale')}
-                  className="form-control text-uppercase"
-                  placeholder="RSSMRA85M01H501Z"
-                  maxLength={16}
-                />
-                {errors.codiceFiscale && (
-                  <p className="text-danger small mt-1">{errors.codiceFiscale.message}</p>
-                )}
-                
-                
-                {/* Warning se dati non corrispondono */}
-                {cfWarnings.length > 0 && (
-                  <div className="mt-2 p-3 alert alert-warning">
-                    <div className="d-flex align-items-start gap-2">
-                      <div className="small">
-                        {cfWarnings.map((warning, index) => (
-                          <p key={index} className="mb-1">{warning}</p>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">Data di Nascita *</label>
-                <input
-                  type="date"
-                  {...register('dataNascita')}
-                  className="form-control"
-                  max={new Date().toISOString().split('T')[0]}
-                />
-                {errors.dataNascita && (
-                  <p className="text-danger small mt-1">{errors.dataNascita.message}</p>
-                )}
-                {cfInfo.dataNascita && dataNascita === cfInfo.dataNascita && (
-                  <p className="small text-success mt-1 d-flex align-items-center gap-1">
-                    <CheckCircle size={14} />
-                    Corrispondente al codice fiscale
-                  </p>
-                )}
-              </div>
             </div>
 
             {/* Dichiarazioni */}
