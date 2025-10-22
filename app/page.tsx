@@ -10,7 +10,7 @@ export default function Home() {
           <div className="row">
             <div className="col-12">
               <div className="it-header-slim-wrapper-content">
-                <a className="d-lg-block navbar-brand" href="#">Città metropolitana di Roma Capitale</a>
+                <a className="d-lg-block navbar-brand" href="https://www.cittametropolitanaroma.it/">Città metropolitana di Roma Capitale</a>
                 <div className="it-header-slim-right-zone">
                   <Link href="/login" className="btn btn-primary btn-icon btn-full">
                     <span className="rounded-icon">

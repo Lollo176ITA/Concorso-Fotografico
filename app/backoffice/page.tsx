@@ -189,10 +189,12 @@ export default function AdminPage() {
           </div>
           <button
             onClick={handleLogout}
-            className="btn btn-outline-danger d-flex align-items-center gap-2"
+            className="btn btn-danger btn-icon"
           >
-            <LogOut size={20} />
-            Esci
+            <svg className="icon icon-white icon-sm" aria-hidden="true">
+              <use href="/bootstrap-italia/svg/sprites.svg#it-exit"></use>
+            </svg>
+            <span>Esci</span>
           </button>
         </div>
 
@@ -224,23 +226,22 @@ export default function AdminPage() {
             </div>
 
             <div className="table-responsive">
-              <table className="table table-hover">
+              <table className="table table-hover align-middle">
                 <thead>
                   <tr>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Codice Fiscale</th>
-                    <th>Comune</th>
-                    <th>Data Invio</th>
-                    <th>Foto</th>
-                    <th>Documenti</th>
-                    <th>Azioni</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Codice Fiscale</th>
+                    <th scope="col">Comune</th>
+                    <th scope="col">Data Invio</th>
+                    <th scope="col">Foto</th>
+                    <th scope="col">Azioni</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredSubmissions.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="text-center text-muted py-4">
+                      <td colSpan={7} className="text-center text-muted py-4">
                         {searchTerm ? 'Nessuna candidatura trovata' : 'Nessuna candidatura ricevuta'}
                       </td>
                     </tr>
@@ -250,41 +251,37 @@ export default function AdminPage() {
                         <td className="fw-medium">
                           {submission.nome} {submission.cognome}
                           {submission.isMinorenne && (
-                            <span className="badge bg-warning text-dark ms-2">Minorenne</span>
+                            <span> (Minorenne)</span>
                           )}
                         </td>
                         <td>{submission.email}</td>
-                        <td className="font-monospace small">{submission.codiceFiscale}</td>
+                        <td>{submission.codiceFiscale}</td>
                         <td>{submission.residenzaComune}</td>
                         <td>{new Date(submission.timestamp).toLocaleDateString('it-IT')}</td>
-                        <td>
-                          <span className="badge bg-primary">{submission.imagesCount} foto</span>
-                        </td>
-                        <td>
-                          <div className="d-flex gap-1">
-                            {submission.hasAllegato1 && (
-                              <span className="badge bg-success">Allegato 1</span>
-                            )}
-                            {submission.hasLiberatoria && (
-                              <span className="badge bg-info">Liberatoria</span>
-                            )}
-                          </div>
-                        </td>
+                        <td><span>{submission.imagesCount} foto</span></td>
                         <td>
                           <div className="d-flex gap-2">
                             <button
                               onClick={() => handleViewDetails(submission)}
-                              className="btn btn-sm btn-outline-primary"
+                              className="btn btn-primary btn-sm btn-icon"
                               title="Visualizza dettagli"
+                              aria-label="Visualizza dettagli"
                             >
-                              <Eye size={16} />
+                              <svg className="icon icon-white icon-sm" aria-hidden="true">
+                                <use href="/bootstrap-italia/svg/sprites.svg#it-search"></use>
+                              </svg>
+                              <span className="d-none d-lg-inline ms-1">Dettagli</span>
                             </button>
                             <button
                               onClick={() => handleDownloadFiles(submission.codiceFiscale)}
-                              className="btn btn-sm btn-outline-success"
+                              className="btn btn-success btn-sm btn-icon"
                               title="Scarica file"
+                              aria-label="Scarica file"
                             >
-                              <Download size={16} />
+                              <svg className="icon icon-white icon-sm" aria-hidden="true">
+                                <use href="/bootstrap-italia/svg/sprites.svg#it-download"></use>
+                              </svg>
+                              <span className="d-none d-lg-inline ms-1">Scarica</span>
                             </button>
                           </div>
                         </td>
@@ -366,16 +363,6 @@ export default function AdminPage() {
                     </p>
                   </div>
                   <div className="col-md-6">
-                    <p className="mb-1 text-muted small">Stato</p>
-                    <p className="fw-semibold">
-                      {selectedSubmission.isMinorenne ? (
-                        <span className="badge bg-warning text-dark">Minorenne</span>
-                      ) : (
-                        <span className="badge bg-success">Maggiorenne</span>
-                      )}
-                    </p>
-                  </div>
-                  <div className="col-12">
                     <p className="mb-1 text-muted small">Data Invio</p>
                     <p className="fw-semibold">
                       {new Date(selectedSubmission.timestamp).toLocaleString('it-IT')}
@@ -454,18 +441,23 @@ export default function AdminPage() {
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-outline-secondary"
+                  className="btn btn-outline-primary btn-icon"
                   onClick={() => setSelectedSubmission(null)}
                 >
-                  Chiudi
+                  <svg className="icon icon-primary icon-sm" aria-hidden="true">
+                    <use href="/bootstrap-italia/svg/sprites.svg#it-close"></use>
+                  </svg>
+                  <span>Chiudi</span>
                 </button>
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-success btn-icon"
                   onClick={() => handleDownloadFiles(selectedSubmission.codiceFiscale)}
                 >
-                  <Download size={16} className="me-2" />
-                  Scarica File
+                  <svg className="icon icon-white icon-sm" aria-hidden="true">
+                    <use href="/bootstrap-italia/svg/sprites.svg#it-download"></use>
+                  </svg>
+                  <span>Scarica File</span>
                 </button>
               </div>
             </div>
