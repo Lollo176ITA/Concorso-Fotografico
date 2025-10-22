@@ -641,44 +641,21 @@ export default function RegistrazionePage() {
 
             <div className="mb-4">
               <label className="form-label fw-semibold">Rapporto di Lavoro *</label>
-              <div className="d-flex flex-column gap-2">
-                <div className="form-check">
-                  <input
-                    type="radio"
-                    {...register('dipendente')}
-                    value="no"
-                    className="form-check-input"
-                    id="dipendente-no"
-                  />
-                  <label className="form-check-label" htmlFor="dipendente-no">
-                    Non sono dipendente di Città metropolitana di Roma Capitale o di Capitale Lavoro SpA
-                  </label>
-                </div>
-                <div className="form-check">
-                  <input
-                    type="radio"
-                    {...register('dipendente')}
-                    value="cittametropolitana"
-                    className="form-check-input"
-                    id="dipendente-cm"
-                  />
-                  <label className="form-check-label" htmlFor="dipendente-cm">
-                    Sono dipendente di Città metropolitana di Roma Capitale
-                  </label>
-                </div>
-                <div className="form-check">
-                  <input
-                    type="radio"
-                    {...register('dipendente')}
-                    value="capitalelavoro"
-                    className="form-check-input"
-                    id="dipendente-cl"
-                  />
-                  <label className="form-check-label" htmlFor="dipendente-cl">
-                    Sono dipendente di Capitale Lavoro SpA
-                  </label>
-                </div>
-              </div>
+              <select
+                {...register('dipendente')}
+                className="form-select"
+                defaultValue="no"
+              >
+                <option value="no">
+                  Non sono dipendente di Città metropolitana di Roma Capitale o di Capitale Lavoro SpA
+                </option>
+                <option value="cittametropolitana">
+                  Sono dipendente di Città metropolitana di Roma Capitale
+                </option>
+                <option value="capitalelavoro">
+                  Sono dipendente di Capitale Lavoro SpA
+                </option>
+              </select>
               {errors.dipendente && <p className="text-danger small mt-1">{errors.dipendente.message}</p>}
             </div>
 

@@ -44,7 +44,8 @@ export default function AutocompleteInput({
   const handleInputChange = (inputValue: string) => {
     onChange(inputValue);
     
-    if (inputValue.length > 0) {
+    // Richiedi almeno 3 caratteri per iniziare la ricerca
+    if (inputValue.length >= 3) {
       const searchTerm = inputValue.toLowerCase();
       const filtered = options
         .filter((option) => option.toLowerCase().includes(searchTerm))
@@ -119,7 +120,8 @@ export default function AutocompleteInput({
           value={value}
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => {
-            if (value.length > 0) {
+            // Richiedi almeno 3 caratteri per mostrare suggerimenti
+            if (value.length >= 3) {
               const searchTerm = value.toLowerCase();
               const filtered = options
                 .filter((option) => option.toLowerCase().includes(searchTerm))

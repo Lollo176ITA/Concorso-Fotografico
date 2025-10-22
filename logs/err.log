@@ -192,3 +192,16 @@
 2025-10-22 13:38:52 +02:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
 2025-10-22 13:38:53 +02:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
 2025-10-22 13:38:53 +02:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-22 13:45:39 +02:00:  ⨯ [Error: Cannot find module '/gfstorage/www/siti/concorso/Concorso-Fotografico/.next/server/middleware-manifest.json'
+Require stack:
+- /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/server/next-server.js
+- /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/server/next.js
+- /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/server/lib/start-server.js
+- /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/cli/next-start.js] {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+2025-10-22 13:46:27 +02:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-22 13:46:27 +02:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-22 13:46:27 +02:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-22 13:46:27 +02:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
