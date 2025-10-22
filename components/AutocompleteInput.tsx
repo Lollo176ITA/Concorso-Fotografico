@@ -90,11 +90,11 @@ export default function AutocompleteInput({
   };
 
   return (
-    <div ref={wrapperRef} className="relative">
-      <label className="label">
+    <div ref={wrapperRef} className="position-relative">
+      <label className="form-label fw-semibold">
         {label} {required && '*'}
       </label>
-      <div className="relative">
+      <div className="position-relative">
         <input
           ref={inputRef}
           type="text"
@@ -111,29 +111,40 @@ export default function AutocompleteInput({
           }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className={`input-field pr-10 ${className}`}
+          className={`form-control pe-5 ${className}`}
           autoComplete="off"
         />
         <ChevronDown
-          className={`absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          size={20}
+          className="position-absolute end-0 top-50 translate-middle-y me-3 text-muted"
+          style={{
+            transform: isOpen ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%)',
+            transition: 'transform 0.2s'
+          }}
         />
       </div>
 
       {isOpen && filteredOptions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+        <div className="position-absolute w-100 mt-1 bg-white border rounded shadow-lg" style={{zIndex: 1050, maxHeight: '240px', overflowY: 'auto'}}>
           {filteredOptions.map((option, index) => (
             <button
               key={option}
               type="button"
               onClick={() => handleSelectOption(option)}
               onMouseEnter={() => setHighlightedIndex(index)}
-              className={`w-full text-left px-4 py-2 hover:bg-primary-50 transition-colors ${
-                index === highlightedIndex ? 'bg-primary-100' : ''
-              } ${index === 0 ? 'rounded-t-lg' : ''} ${
-                index === filteredOptions.length - 1 ? 'rounded-b-lg' : ''
+              className={`w-100 text-start px-3 py-2 border-0 ${
+                index === highlightedIndex ? 'bg-primary bg-opacity-10' : 'bg-white'
               }`}
+              style={{
+                transition: 'background-color 0.15s',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 102, 204, 0.1)'}
+              onMouseOut={(e) => {
+                if (index !== highlightedIndex) {
+                  e.currentTarget.style.backgroundColor = 'white';
+                }
+              }}
             >
               {option}
             </button>
@@ -141,7 +152,7 @@ export default function AutocompleteInput({
         </div>
       )}
 
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="text-danger small mt-1">{error}</p>}
     </div>
   );
 }

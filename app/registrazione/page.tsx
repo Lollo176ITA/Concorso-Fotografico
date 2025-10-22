@@ -7,6 +7,7 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { ArrowLeft, Upload, X, CheckCircle, Loader2, Download, AlertCircle } from 'lucide-react';
 import { generateAllegato1PDF } from '@/utils/generatePDF';
+import { generateLiberatoriaPDF } from '@/utils/generateLiberatoriaPDF';
 import AutocompleteInput from '@/components/AutocompleteInput';
 import { tuttiComuni, comuniRomaMetropolitana } from '@/utils/comuni';
 import { 
@@ -56,8 +57,9 @@ type RegistrationForm = z.infer<typeof registrationSchema>;
 export default function RegistrazionePage() {
   const [currentStep, setCurrentStep] = useState(1); // 1: Dati, 2: Allegato 1, 3: Foto
   const [images, setImages] = useState<File[]>([]);
-  const [documento, setDocumento] = useState<File | null>(null);
   const [allegato1Firmato, setAllegato1Firmato] = useState<File | null>(null);
+  const [liberatoriaFirmata, setLiberatoriaFirmata] = useState<File | null>(null);
+  const [isUploadingLiberatoria, setIsUploadingLiberatoria] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -68,6 +70,7 @@ export default function RegistrazionePage() {
     dataNascita: null,
     comune: null
   });
+  const [isUploadingAllegato, setIsUploadingAllegato] = useState(false);
 
   const {
     register,
@@ -119,29 +122,13 @@ export default function RegistrazionePage() {
     if (validFiles.length > 0) {
       setImages([...images, ...validFiles]);
     }
-  };
 
-  const handleDocumentoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!ACCEPTED_DOC_TYPES.includes(file.type)) {
-        alert('Formato file non valido. Usa PDF o immagini (JPG, PNG)');
-        return;
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        alert('Il file è troppo grande. Massimo 3MB');
-        return;
-      }
-      setDocumento(file);
-    }
+    // Reset input
+    e.target.value = '';
   };
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
-  };
-
-  const removeDocumento = () => {
-    setDocumento(null);
   };
 
   const onSubmitFinal = async () => {
@@ -153,12 +140,12 @@ export default function RegistrazionePage() {
     }
 
     if (!allegato1Firmato) {
-      alert('Devi caricare l\'Allegato 1 firmato!');
+      alert('Devi caricare il Modulo Concorso Fotografico firmato!');
       return;
     }
 
-    if (isMinorenne() && !documento) {
-      alert('I minorenni devono caricare un documento di identità!');
+    if (isMinorenne() && !liberatoriaFirmata) {
+      alert('I minorenni devono caricare la liberatoria firmata dal genitore/tutore!');
       return;
     }
 
@@ -183,8 +170,8 @@ export default function RegistrazionePage() {
         submitFormData.append('images', image);
       });
 
-      if (documento) {
-        submitFormData.append('documento', documento);
+      if (liberatoriaFirmata) {
+        submitFormData.append('liberatoria', liberatoriaFirmata);
       }
 
       submitFormData.append('allegato1', allegato1Firmato);
@@ -216,6 +203,18 @@ export default function RegistrazionePage() {
     }
   };
 
+  const handleDownloadLiberatoria = () => {
+    if (formData) {
+      generateLiberatoriaPDF({
+        nomeMinore: formData.nome,
+        cognomeMinore: formData.cognome,
+        codiceFiscale: formData.codiceFiscale,
+        dataNascita: formData.dataNascita,
+        luogoNascita: formData.luogoNascita,
+      });
+    }
+  };
+
   const handleStep1Submit = (data: RegistrationForm) => {
     setFormData(data);
     setCurrentStep(2);
@@ -224,12 +223,12 @@ export default function RegistrazionePage() {
 
   const handleStep2Submit = () => {
     if (!allegato1Firmato) {
-      alert('Devi caricare l\'Allegato 1 firmato prima di continuare!');
+      alert('Devi caricare il Modulo Concorso Fotografico firmato prima di continuare!');
       return;
     }
     
-    if (isMinorenne() && !documento) {
-      alert('I minorenni devono caricare un documento di identità!');
+    if (isMinorenne() && !liberatoriaFirmata) {
+      alert('I minorenni devono caricare la liberatoria firmata dal genitore/tutore!');
       return;
     }
 
@@ -237,23 +236,93 @@ export default function RegistrazionePage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const processAllegato1File = (file: File) => {
+    if (file.type !== 'application/pdf') {
+      alert('Il file deve essere in formato PDF');
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      alert('Il file è troppo grande. Massimo 3MB');
+      return;
+    }
+    
+    // Simula il caricamento con un delay
+    setIsUploadingAllegato(true);
+    setTimeout(() => {
+      setAllegato1Firmato(file);
+      setIsUploadingAllegato(false);
+    }, 1500); // 1.5 secondi di simulazione caricamento
+  };
+
   const handleAllegato1Upload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.type !== 'application/pdf') {
-        alert('Il file deve essere in formato PDF');
-        return;
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        alert('Il file è troppo grande. Massimo 3MB');
-        return;
-      }
-      setAllegato1Firmato(file);
+      processAllegato1File(file);
+    }
+  };
+
+  const handleAllegato1DragOver = (e: React.DragEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleAllegato1Drop = (e: React.DragEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processAllegato1File(file);
     }
   };
 
   const removeAllegato1 = () => {
     setAllegato1Firmato(null);
+    setIsUploadingAllegato(false);
+  };
+
+  const processLiberatoriaFile = (file: File) => {
+    if (file.type !== 'application/pdf') {
+      alert('Il file deve essere in formato PDF');
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      alert('Il file è troppo grande. Massimo 3MB');
+      return;
+    }
+    
+    setIsUploadingLiberatoria(true);
+    setTimeout(() => {
+      setLiberatoriaFirmata(file);
+      setIsUploadingLiberatoria(false);
+    }, 1500);
+  };
+
+  const handleLiberatoriaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processLiberatoriaFile(file);
+    }
+  };
+
+  const handleLibератоriaDragOver = (e: React.DragEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleLibератоriaDrop = (e: React.DragEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processLiberatoriaFile(file);
+    }
+  };
+
+  const removeLiberatoria = () => {
+    setLiberatoriaFirmata(null);
+    setIsUploadingLiberatoria(false);
   };
 
   // Effetto per la validazione del codice fiscale in tempo reale
@@ -278,12 +347,12 @@ export default function RegistrazionePage() {
         const warnings: string[] = [];
         if (dataNascita && datiCF.dataNascita && datiCF.dataNascita !== dataNascita) {
           const dataFormattata = new Date(datiCF.dataNascita).toLocaleDateString('it-IT');
-          warnings.push(`⚠️ La data di nascita inserita non corrisponde al CF (dal CF: ${dataFormattata})`);
+          warnings.push(` La data di nascita inserita non corrisponde al CF (dal CF: ${dataFormattata})`);
         }
 
         setCfWarnings(warnings);
       } else {
-        setCfWarnings(datiCF.errors.map(err => `❌ ${err}`));
+        setCfWarnings(datiCF.errors.map(err => `${err}`));
         setCfInfo({ sesso: null, dataNascita: null, comune: null });
       }
     } else {
@@ -294,178 +363,184 @@ export default function RegistrazionePage() {
 
   if (submitSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 py-12">
-        <div className="card max-w-2xl w-full text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
-            <CheckCircle className="w-10 h-10 text-green-600" />
+      <div className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-5">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-lg-8">
+              <div className="card shadow text-center">
+                <div className="card-body p-5">
+                  <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-4" 
+                       style={{width: '80px', height: '80px', background: 'rgba(40, 167, 69, 0.1)'}}>
+                    <CheckCircle size={40} color="#28a745" />
+                  </div>
+                  <h1 className="display-4 fw-bold mb-3">Candidatura Inviata!</h1>
+                  <p className="text-muted mb-3">
+                    La tua candidatura al concorso &quot;Scattiamo in Provincia&quot; è stata inviata con successo.
+                  </p>
+                  <Link href="/" className="btn btn-primary btn-lg">
+                    Torna alla Home
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold mb-4 text-gray-800">Candidatura Inviata!</h1>
-          <p className="text-gray-600 mb-4">
-            La tua candidatura al concorso &quot;Scattiamo in Provincia&quot; è stata inviata con successo.
-          </p>
-          <p className="text-gray-600 mb-8">
-            Riceverai una conferma via email all&apos;indirizzo fornito.
-          </p>
-
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-            <h3 className="font-bold text-green-900 mb-2">Cosa succede ora?</h3>
-            <p className="text-green-800 text-sm">
-              La Commissione valuterà le fotografie caricate e le migliori saranno selezionate per 
-              l&apos;esposizione a Palazzo Valentini e la pubblicazione sui canali della Città metropolitana.
-            </p>
-          </div>
-
-          <Link href="/" className="btn-primary inline-block">
-            Torna alla Home
-          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+    <main className="min-vh-100 py-5 px-3">
+      <div className="container">
         <Link
           href="/"
-          className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-8 font-semibold"
+          className="d-inline-flex align-items-center text-primary text-decoration-none mb-4 fw-semibold"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
+          <ArrowLeft size={20} className="me-2" />
           Torna alla Home
         </Link>
 
-        <div className="card">
-          <h1 className="text-4xl font-bold mb-2 text-gray-800">Modulo di Registrazione</h1>
-          <p className="text-gray-600 mb-2">
-            Concorso Fotografico &quot;Scattiamo in Provincia&quot;
-          </p>
-          <p className="text-gray-600 mb-8">
-            Compila tutti i campi per partecipare gratuitamente al concorso
-          </p>
+        <div className="card shadow">
+          <div className="card-body p-4 p-md-5">
+            <h1 className="display-4 fw-bold mb-2">Modulo di Registrazione</h1>
+            <p className="text-muted mb-2">
+              Concorso Fotografico &quot;Scattiamo in Provincia&quot;
+            </p>
+            <p className="text-muted mb-5">
+              Compila tutti i campi per partecipare gratuitamente al concorso
+            </p>
 
           {/* Timeline */}
-          <div className="mb-12">
-            <div className="flex items-center">
+          <div className="mb-5">
+            <div className="d-flex align-items-center justify-content-between">
               {/* Step 1 */}
-              <div className="flex flex-col items-center">
+              <div className="d-flex flex-column align-items-center text-center" style={{flex: '0 0 auto', minWidth: 0}}>
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
+                  className={`rounded-circle d-flex align-items-center justify-content-center fw-bold ${
                     currentStep >= 1
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      ? 'bg-primary text-white'
+                      : 'bg-secondary text-white'
                   }`}
+                  style={{width: '40px', height: '40px', fontSize: '1rem'}}
                 >
-                  {currentStep > 1 ? <CheckCircle className="w-6 h-6" /> : 1}
+                  {currentStep > 1 ? <CheckCircle size={20} /> : 1}
                 </div>
                 <p
-                  className={`mt-2 text-sm font-semibold ${
-                    currentStep >= 1 ? 'text-primary-600' : 'text-gray-500'
+                  className={`mt-2 fw-semibold mb-0 ${
+                    currentStep >= 1 ? 'text-primary' : 'text-muted'
                   }`}
+                  style={{fontSize: '0.75rem', lineHeight: '1.2'}}
                 >
-                  Dati Personali
+                  Dati<span className="d-none d-sm-inline"> Personali</span>
                 </p>
-                <p className="text-xs text-gray-500">Compila il modulo</p>
+                <p className="d-none d-md-block text-muted mb-0" style={{fontSize: '0.7rem'}}>Compila il modulo</p>
               </div>
 
               {/* Linea 1 */}
               <div
-                className={`h-1 flex-1 mx-4 transition-all ${
-                  currentStep > 1 ? 'bg-primary-600' : 'bg-gray-200'
+                className={`flex-fill ${
+                  currentStep > 1 ? 'bg-primary' : 'bg-secondary'
                 }`}
+                style={{height: '3px', minWidth: '20px', margin: '0 8px'}}
               />
 
               {/* Step 2 */}
-              <div className="flex flex-col items-center">
+              <div className="d-flex flex-column align-items-center text-center" style={{flex: '0 0 auto', minWidth: 0}}>
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
+                  className={`rounded-circle d-flex align-items-center justify-content-center fw-bold ${
                     currentStep >= 2
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      ? 'bg-primary text-white'
+                      : 'bg-secondary text-white'
                   }`}
+                  style={{width: '40px', height: '40px', fontSize: '1rem'}}
                 >
-                  {currentStep > 2 ? <CheckCircle className="w-6 h-6" /> : 2}
+                  {currentStep > 2 ? <CheckCircle size={20} /> : 2}
                 </div>
                 <p
-                  className={`mt-2 text-sm font-semibold ${
-                    currentStep >= 2 ? 'text-primary-600' : 'text-gray-500'
+                  className={`mt-2 fw-semibold mb-0 ${
+                    currentStep >= 2 ? 'text-primary' : 'text-muted'
                   }`}
+                  style={{fontSize: '0.75rem', lineHeight: '1.2'}}
                 >
-                  Firma Liberatorie
+                  Documenti
                 </p>
-                <p className="text-xs text-gray-500">Allegato 1 firmato</p>
+                <p className="d-none d-md-block text-muted mb-0" style={{fontSize: '0.7rem'}}>Inserisci i documenti</p>
               </div>
 
               {/* Linea 2 */}
               <div
-                className={`h-1 flex-1 mx-4 transition-all ${
-                  currentStep > 2 ? 'bg-primary-600' : 'bg-gray-200'
+                className={`flex-fill ${
+                  currentStep > 2 ? 'bg-primary' : 'bg-secondary'
                 }`}
+                style={{height: '3px', minWidth: '20px', margin: '0 8px'}}
               />
 
               {/* Step 3 */}
-              <div className="flex flex-col items-center">
+              <div className="d-flex flex-column align-items-center text-center" style={{flex: '0 0 auto', minWidth: 0}}>
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
+                  className={`rounded-circle d-flex align-items-center justify-content-center fw-bold ${
                     currentStep >= 3
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      ? 'bg-primary text-white'
+                      : 'bg-secondary text-white'
                   }`}
+                  style={{width: '40px', height: '40px', fontSize: '1rem'}}
                 >
-                  {currentStep > 3 ? <CheckCircle className="w-6 h-6" /> : 3}
+                  {currentStep > 3 ? <CheckCircle size={20} /> : 3}
                 </div>
                 <p
-                  className={`mt-2 text-sm font-semibold ${
-                    currentStep >= 3 ? 'text-primary-600' : 'text-gray-500'
+                  className={`mt-2 fw-semibold mb-0 ${
+                    currentStep >= 3 ? 'text-primary' : 'text-muted'
                   }`}
+                  style={{fontSize: '0.75rem', lineHeight: '1.2'}}
                 >
-                  Carica Foto
+                  Carica<span className="d-none d-sm-inline"> Foto</span>
                 </p>
-                <p className="text-xs text-gray-500">Le tue fotografie</p>
+                <p className="d-none d-md-block text-muted mb-0" style={{fontSize: '0.7rem'}}>Carica fotografie</p>
               </div>
             </div>
           </div>
 
           {/* Step 1: Dati Personali */}
           {currentStep === 1 && (
-            <form onSubmit={handleSubmit(handleStep1Submit)} className="space-y-6">
+            <form onSubmit={handleSubmit(handleStep1Submit)}>
             {/* Dati Personali */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="label">Nome *</label>
+            <div className="row g-3 mb-3">
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Nome *</label>
                 <input
                   type="text"
                   {...register('nome')}
-                  className="input-field"
+                  className="form-control"
                   placeholder="Mario"
                 />
-                {errors.nome && <p className="error-message">{errors.nome.message}</p>}
+                {errors.nome && <p className="text-danger small mt-1">{errors.nome.message}</p>}
               </div>
 
-              <div>
-                <label className="label">Cognome *</label>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Cognome *</label>
                 <input
                   type="text"
                   {...register('cognome')}
-                  className="input-field"
+                  className="form-control"
                   placeholder="Rossi"
                 />
-                {errors.cognome && <p className="error-message">{errors.cognome.message}</p>}
+                {errors.cognome && <p className="text-danger small mt-1">{errors.cognome.message}</p>}
               </div>
             </div>
 
-            <div>
-              <label className="label">Email *</label>
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Email *</label>
               <input
                 type="email"
                 {...register('email')}
-                className="input-field"
+                className="form-control"
                 placeholder="mario.rossi@example.com"
               />
-              {errors.email && <p className="error-message">{errors.email.message}</p>}
+              {errors.email && <p className="text-danger small mt-1">{errors.email.message}</p>}
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
+            <div className="row g-3 mb-3">
+              <div className="col-md-6">
                 <Controller
                   name="luogoNascita"
                   control={control}
@@ -483,20 +558,20 @@ export default function RegistrazionePage() {
                 />
               </div>
 
-              <div>
-                <label className="label">Telefono *</label>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Telefono *</label>
                 <input
                   type="tel"
                   {...register('telefono')}
-                  className="input-field"
+                  className="form-control"
                   placeholder="+39 333 1234567"
                 />
-                {errors.telefono && <p className="error-message">{errors.telefono.message}</p>}
+                {errors.telefono && <p className="text-danger small mt-1">{errors.telefono.message}</p>}
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
+            <div className="row g-3 mb-3">
+              <div className="col-md-6">
                 <Controller
                   name="residenzaComune"
                   control={control}
@@ -514,96 +589,85 @@ export default function RegistrazionePage() {
                 />
               </div>
 
-              <div>
-                <label className="label">Indirizzo di Residenza (Via/Piazza) *</label>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Indirizzo di Residenza (Via/Piazza) *</label>
                 <input
                   type="text"
                   {...register('residenzaIndirizzo')}
-                  className="input-field"
+                  className="form-control"
                   placeholder="Via Roma, 123"
                 />
                 {errors.residenzaIndirizzo && (
-                  <p className="error-message">{errors.residenzaIndirizzo.message}</p>
+                  <p className="text-danger small mt-1">{errors.residenzaIndirizzo.message}</p>
                 )}
               </div>
             </div>
 
-            <div>
-              <label className="label">Rapporto di Lavoro *</label>
-              <div className="space-y-3">
-                <label className="flex items-center">
+            <div className="mb-4">
+              <label className="form-label fw-semibold">Rapporto di Lavoro *</label>
+              <div className="d-flex flex-column gap-2">
+                <div className="form-check">
                   <input
                     type="radio"
                     {...register('dipendente')}
                     value="no"
-                    className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                    className="form-check-input"
+                    id="dipendente-no"
                   />
-                  <span className="ml-2 text-gray-700">
+                  <label className="form-check-label" htmlFor="dipendente-no">
                     Non sono dipendente di Città metropolitana di Roma Capitale o di Capitale Lavoro SpA
-                  </span>
-                </label>
-                <label className="flex items-center">
+                  </label>
+                </div>
+                <div className="form-check">
                   <input
                     type="radio"
                     {...register('dipendente')}
                     value="cittametropolitana"
-                    className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                    className="form-check-input"
+                    id="dipendente-cm"
                   />
-                  <span className="ml-2 text-gray-700">
+                  <label className="form-check-label" htmlFor="dipendente-cm">
                     Sono dipendente di Città metropolitana di Roma Capitale
-                  </span>
-                </label>
-                <label className="flex items-center">
+                  </label>
+                </div>
+                <div className="form-check">
                   <input
                     type="radio"
                     {...register('dipendente')}
                     value="capitalelavoro"
-                    className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                    className="form-check-input"
+                    id="dipendente-cl"
                   />
-                  <span className="ml-2 text-gray-700">Sono dipendente di Capitale Lavoro SpA</span>
-                </label>
+                  <label className="form-check-label" htmlFor="dipendente-cl">
+                    Sono dipendente di Capitale Lavoro SpA
+                  </label>
+                </div>
               </div>
-              {errors.dipendente && <p className="error-message">{errors.dipendente.message}</p>}
+              {errors.dipendente && <p className="text-danger small mt-1">{errors.dipendente.message}</p>}
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="label">Codice Fiscale *</label>
+            <div className="row g-3 mb-3">
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Codice Fiscale *</label>
                 <input
                   type="text"
                   {...register('codiceFiscale')}
-                  className="input-field uppercase"
+                  className="form-control text-uppercase"
                   placeholder="RSSMRA85M01H501Z"
                   maxLength={16}
                 />
                 {errors.codiceFiscale && (
-                  <p className="error-message">{errors.codiceFiscale.message}</p>
+                  <p className="text-danger small mt-1">{errors.codiceFiscale.message}</p>
                 )}
                 
-                {/* Info estratte dal CF */}
-                {cfInfo.sesso && (
-                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-xs font-semibold text-blue-900 mb-1">
-                      Dati estratti dal Codice Fiscale:
-                    </p>
-                    <div className="text-xs text-blue-800 space-y-1">
-                      {cfInfo.sesso && <p>• Sesso: {cfInfo.sesso}</p>}
-                      {cfInfo.dataNascita && (
-                        <p>• Data di nascita: {new Date(cfInfo.dataNascita).toLocaleDateString('it-IT')}</p>
-                      )}
-                      {cfInfo.comune && <p>• Comune di nascita: {cfInfo.comune}</p>}
-                    </div>
-                  </div>
-                )}
                 
                 {/* Warning se dati non corrispondono */}
                 {cfWarnings.length > 0 && (
-                  <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="flex items-start gap-2">
-                      <AlertCircle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-                      <div className="text-xs text-yellow-800 space-y-1">
+                  <div className="mt-2 p-3 alert alert-warning">
+                    <div className="d-flex align-items-start gap-2">
+                      <div className="small">
                         {cfWarnings.map((warning, index) => (
-                          <p key={index}>{warning}</p>
+                          <p key={index} className="mb-1">{warning}</p>
                         ))}
                       </div>
                     </div>
@@ -611,20 +675,20 @@ export default function RegistrazionePage() {
                 )}
               </div>
 
-              <div>
-                <label className="label">Data di Nascita *</label>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Data di Nascita *</label>
                 <input
                   type="date"
                   {...register('dataNascita')}
-                  className="input-field"
+                  className="form-control"
                   max={new Date().toISOString().split('T')[0]}
                 />
                 {errors.dataNascita && (
-                  <p className="error-message">{errors.dataNascita.message}</p>
+                  <p className="text-danger small mt-1">{errors.dataNascita.message}</p>
                 )}
                 {cfInfo.dataNascita && dataNascita === cfInfo.dataNascita && (
-                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3" />
+                  <p className="small text-success mt-1 d-flex align-items-center gap-1">
+                    <CheckCircle size={14} />
                     Corrispondente al codice fiscale
                   </p>
                 )}
@@ -632,79 +696,83 @@ export default function RegistrazionePage() {
             </div>
 
             {/* Dichiarazioni */}
-            <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-6 space-y-4">
-              <h3 className="font-bold text-lg text-gray-800 mb-4">Dichiarazioni Obbligatorie</h3>
+            <div className="bg-light border rounded p-4 mb-4">
+              <h3 className="h5 fw-bold mb-4">Dichiarazioni Obbligatorie</h3>
               
-              <label className="flex items-start">
+              <div className="form-check mb-3">
                 <input
                   type="checkbox"
                   {...register('dichiarazioneFoto')}
-                  className="w-5 h-5 text-primary-600 focus:ring-primary-500 mt-1"
+                  className="form-check-input"
+                  id="dichiarazioneFoto"
                 />
-                <span className="ml-3 text-sm text-gray-700">
+                <label className="form-check-label small" htmlFor="dichiarazioneFoto">
                   Dichiaro che le foto presentate sono state interamente ideate e scattate da me e assicuro 
                   che sulle stesse non gravino diritti di nessun genere a favore di terzi, lasciando indenne 
                   la Città metropolitana di Roma Capitale da qualsivoglia responsabilità *
-                </span>
-              </label>
-              {errors.dichiarazioneFoto && (
-                <p className="error-message ml-8">{errors.dichiarazioneFoto.message}</p>
-              )}
+                </label>
+                {errors.dichiarazioneFoto && (
+                  <p className="text-danger small mt-1">{errors.dichiarazioneFoto.message}</p>
+                )}
+              </div>
 
-              <label className="flex items-start">
+              <div className="form-check mb-3">
                 <input
                   type="checkbox"
                   {...register('dichiarazioneContenuti')}
-                  className="w-5 h-5 text-primary-600 focus:ring-primary-500 mt-1"
+                  className="form-check-input"
+                  id="dichiarazioneContenuti"
                 />
-                <span className="ml-3 text-sm text-gray-700">
+                <label className="form-check-label small" htmlFor="dichiarazioneContenuti">
                   Dichiaro che le foto caricate: (i) non contengono materiale osceno, esplicitamente sessuale, 
                   violento, offensivo o diffamatorio; (ii) non contengono materiale discriminante per sesso, 
                   etnia e religione; (iii) non contengono materiale politico *
-                </span>
-              </label>
-              {errors.dichiarazioneContenuti && (
-                <p className="error-message ml-8">{errors.dichiarazioneContenuti.message}</p>
-              )}
+                </label>
+                {errors.dichiarazioneContenuti && (
+                  <p className="text-danger small mt-1">{errors.dichiarazioneContenuti.message}</p>
+                )}
+              </div>
 
-              <label className="flex items-start">
+              <div className="form-check mb-3">
                 <input
                   type="checkbox"
                   {...register('accettaTermini')}
-                  className="w-5 h-5 text-primary-600 focus:ring-primary-500 mt-1"
+                  className="form-check-input"
+                  id="accettaTermini"
                 />
-                <span className="ml-3 text-sm text-gray-700">
+                <label className="form-check-label small" htmlFor="accettaTermini">
                   Dichiaro, sotto la propria responsabilità, ai sensi degli artt. 46 e 47 del D.P.R. 28 dicembre 
                   2000, n. 445, di aver preso visione e di accettare tutte le clausole contenute nel bando senza 
                   condizione alcuna *
-                </span>
-              </label>
-              {errors.accettaTermini && (
-                <p className="error-message ml-8">{errors.accettaTermini.message}</p>
-              )}
+                </label>
+                {errors.accettaTermini && (
+                  <p className="text-danger small mt-1">{errors.accettaTermini.message}</p>
+                )}
+              </div>
 
-              <label className="flex items-start">
+              <div className="form-check mb-0">
                 <input
                   type="checkbox"
                   {...register('accettaPrivacy')}
-                  className="w-5 h-5 text-primary-600 focus:ring-primary-500 mt-1"
+                  className="form-check-input"
+                  id="accettaPrivacy"
                 />
-                <span className="ml-3 text-sm text-gray-700">
+                <label className="form-check-label small" htmlFor="accettaPrivacy">
                   Autorizzo la Città metropolitana di Roma Capitale al trattamento dei dati personali per la sola 
                   espletazione delle pratiche relative al concorso ai sensi del Decreto Legislativo 196/2003 e del 
                   Regolamento UE 679/2016 *
-                </span>
-              </label>
-              {errors.accettaPrivacy && (
-                <p className="error-message ml-8">{errors.accettaPrivacy.message}</p>
-              )}
+                </label>
+                {errors.accettaPrivacy && (
+                  <p className="text-danger small mt-1">{errors.accettaPrivacy.message}</p>
+                )}
+              </div>
             </div>
 
             {/* Submit Button Step 1 */}
-            <div className="flex gap-4 pt-4">
+            <div className="d-flex gap-3 pt-3">
               <button
                 type="submit"
-                className="btn-primary flex-1"
+                className="btn btn-primary w-100"
               >
                 Continua allo Step 2
               </button>
@@ -714,130 +782,291 @@ export default function RegistrazionePage() {
 
           {/* Step 2: Allegato 1 e Documenti */}
           {currentStep === 2 && (
-            <div className="space-y-6">
+            <div>
               {/* Riepilogo Dati */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <h3 className="font-bold text-gray-800 mb-2">Riepilogo Dati</h3>
-                <div className="text-sm text-gray-600 grid grid-cols-2 gap-2">
-                  <p><strong>Nome:</strong> {formData?.nome} {formData?.cognome}</p>
-                  <p><strong>Email:</strong> {formData?.email}</p>
-                  <p><strong>Codice Fiscale:</strong> {formData?.codiceFiscale}</p>
-                  <p><strong>Residenza:</strong> {formData?.residenzaComune}</p>
+              <div className="alert alert-secondary mb-4">
+                <h3 className="h6 fw-bold mb-2">Riepilogo Dati</h3>
+                <div className="small">
+                  <div className="row g-2">
+                    <div className="col-md-6">
+                      <p className="mb-1"><strong>Nome:</strong> {formData?.nome} {formData?.cognome}</p>
+                      <p className="mb-1"><strong>Email:</strong> {formData?.email}</p>
+                    </div>
+                    <div className="col-md-6">
+                      <p className="mb-1"><strong>Codice Fiscale:</strong> {formData?.codiceFiscale}</p>
+                      <p className="mb-1"><strong>Residenza:</strong> {formData?.residenzaComune}</p>
+                    </div>
+                  </div>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setCurrentStep(1)}
-                  className="text-primary-600 hover:text-primary-700 text-sm font-semibold mt-3"
+                  className="btn btn-sm btn-link p-0 mt-2"
                 >
                   Modifica dati
                 </button>
               </div>
 
-              {/* Scarica Allegato 1 */}
-              <div className="bg-primary-50 border-2 border-primary-200 rounded-lg p-6">
-                <h3 className="font-bold text-lg text-primary-900 mb-3">
-                  1. Scarica e Firma l&apos;Allegato 1
+              {/* Scarica e Carica Modulo Concorso Fotografico */}
+              <div className="bg-light border rounded p-4 mb-4">
+                <h3 className="h5 fw-bold mb-3">
+                  Scarica e Firma il Modulo Concorso Fotografico
                 </h3>
-                <p className="text-primary-800 mb-4">
-                  Clicca sul pulsante per scaricare l&apos;Allegato 1 precompilato con i tuoi dati. 
+                <p className="mb-3">
+                  Clicca sul pulsante per scaricare il Modulo Concorso Fotografico precompilato con i tuoi dati. 
                   Firmalo (anche digitalmente) e ricaricalo qui sotto.
                 </p>
                 <button
+                  type="button"
                   onClick={handleDownloadPDF}
-                  className="btn-primary inline-flex items-center gap-2"
+                  className="btn btn-primary d-inline-flex align-items-center gap-2 mb-4"
                 >
-                  <Download className="w-5 h-5" />
-                  Scarica Allegato 1 da Firmare
+                  <Download size={20} />
+                  Scarica Modulo Concorso Fotografico
                 </button>
-              </div>
 
-              {/* Upload Allegato 1 Firmato */}
-              <div>
-                <label className="label">2. Carica l&apos;Allegato 1 Firmato * (PDF, max 3MB)</label>
-                {!allegato1Firmato ? (
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-primary-300 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
-                    <Upload className="w-8 h-8 text-primary-600 mb-2" />
-                    <span className="text-sm text-primary-700 font-medium">
-                      Clicca per caricare l&apos;Allegato 1 firmato
-                    </span>
-                    <span className="text-xs text-gray-500 mt-1">Solo PDF</span>
-                    <input
-                      type="file"
-                      onChange={handleAllegato1Upload}
-                      accept=".pdf"
-                      className="hidden"
-                    />
-                  </label>
-                ) : (
-                  <div className="flex items-center justify-between bg-green-50 border border-green-200 p-4 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-600" />
-                      <span className="text-sm font-medium text-green-900">
-                        {allegato1Firmato.name}
-                      </span>
+                <hr className="my-4" />
+                
+                {isUploadingAllegato ? (
+                  <form 
+                    className="upload-dragdrop loading" 
+                    onDragOver={handleAllegato1DragOver}
+                    onSubmit={(e) => e.preventDefault()}
+                  >
+                    <div className="upload-dragdrop-image">
+                      <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
+                      <div className="upload-dragdrop-loading">
+                        <div className="progress-donut" data-bs-progress-donut></div>
+                      </div>
+                      <div className="upload-dragdrop-success">
+                        <svg className="icon" aria-hidden="true">
+                          <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
+                        </svg>
+                      </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={removeAllegato1}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
+                    <div className="upload-dragdrop-text">
+                      <p className="upload-dragdrop-weight">
+                        <svg className="icon icon-xs" aria-hidden="true">
+                          <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
+                        </svg> PDF (max 3MB)
+                      </p>
+                      <h5>Caricamento in corso...</h5>
+                      <p>Il modulo sta caricando</p>
+                    </div>
+                  </form>
+                ) : !allegato1Firmato ? (
+                  <form 
+                    className="upload-dragdrop" 
+                    onDragOver={handleAllegato1DragOver}
+                    onDrop={handleAllegato1Drop}
+                    onSubmit={(e) => e.preventDefault()}
+                  >
+                    <div className="upload-dragdrop-image">
+                      <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
+                      <div className="upload-dragdrop-loading">
+                        <div className="progress-donut" data-bs-progress-donut></div>
+                      </div>
+                      <div className="upload-dragdrop-success">
+                        <svg className="icon" aria-hidden="true">
+                          <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="upload-dragdrop-text">
+                      <p className="upload-dragdrop-weight">
+                        <svg className="icon icon-xs" aria-hidden="true">
+                          <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
+                        </svg> PDF (max 3MB)
+                      </p>
+                      <h5>Trascina il Modulo Concorso Fotografico per caricarlo</h5>
+                      <p>
+                        oppure{' '}
+                        <input
+                          type="file"
+                          onChange={handleAllegato1Upload}
+                          accept=".pdf"
+                          className="upload-dragdrop-input"
+                          id="allegato1-upload"
+                        />
+                        <label htmlFor="allegato1-upload">selezionalo dal dispositivo</label>
+                      </p>
+                    </div>
+                  </form>
+                ) : (
+                  <form 
+                    className="upload-dragdrop success" 
+                    onSubmit={(e) => e.preventDefault()}
+                  >
+                    <div className="upload-dragdrop-image">
+                      <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
+                      <div className="upload-dragdrop-loading">
+                        <div className="progress-donut" data-bs-progress-donut></div>
+                      </div>
+                      <div className="upload-dragdrop-success">
+                        <svg className="icon" aria-hidden="true">
+                          <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="upload-dragdrop-text">
+                      <p className="upload-dragdrop-weight">
+                        <svg className="icon icon-xs" aria-hidden="true">
+                          <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
+                        </svg> PDF ({(allegato1Firmato.size / 1024 / 1024).toFixed(2)}MB)
+                      </p>
+                      <h5>{allegato1Firmato.name}</h5>
+                      <p>Modulo caricato con successo</p>
+                      <button
+                        type="button"
+                        onClick={removeAllegato1}
+                        className="btn btn-sm btn-danger mt-2"
+                      >
+                        <X size={16} className="me-1" />
+                        Rimuovi
+                      </button>
+                    </div>
+                  </form>
                 )}
               </div>
 
-              {/* Documento per Minorenni */}
+              {/* Liberatoria per Minorenni */}
               {isMinorenne() && (
-                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
-                  <h3 className="font-bold text-lg mb-2 text-yellow-900">
-                    3. Documento di Identità (Minorenni)
+                <div className="bg-light border rounded p-4 mb-4">
+                  <h3 className="h5 fw-bold mb-3">
+                    Liberatoria per la Partecipazione di Minori
                   </h3>
-                  <p className="text-yellow-800 mb-4">
-                    Essendo minorenne, è necessario caricare un documento di identità.
+                  <p className="mb-3">
+                    Essendo minorenne, è necessario scaricare e far firmare la liberatoria al genitore/tutore. 
+                    Scarica il documento precompilato, fallo firmare e ricaricalo qui sotto.
                   </p>
+                  <button
+                    type="button"
+                    onClick={handleDownloadLiberatoria}
+                    className="btn btn-primary d-inline-flex align-items-center gap-2 mb-4"
+                  >
+                    <Download size={20} />
+                    Scarica Liberatoria Minorenne
+                  </button>
 
-                  {!documento ? (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-yellow-300 rounded-lg cursor-pointer hover:bg-yellow-50 transition-colors">
-                      <Upload className="w-8 h-8 text-yellow-600 mb-2" />
-                      <span className="text-sm text-yellow-700 font-medium">
-                        Clicca per caricare
-                      </span>
-                      <input
-                        type="file"
-                        onChange={handleDocumentoUpload}
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        className="hidden"
-                      />
-                    </label>
+                  <hr className="my-4" />
+                  
+                  {isUploadingLiberatoria ? (
+                    <form 
+                      className="upload-dragdrop loading" 
+                      onDragOver={handleLibератоriaDragOver}
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      <div className="upload-dragdrop-image">
+                        <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
+                        <div className="upload-dragdrop-loading">
+                          <div className="progress-donut" data-bs-progress-donut></div>
+                        </div>
+                        <div className="upload-dragdrop-success">
+                          <svg className="icon" aria-hidden="true">
+                            <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="upload-dragdrop-text">
+                        <p className="upload-dragdrop-weight">
+                          <svg className="icon icon-xs" aria-hidden="true">
+                            <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
+                          </svg> PDF (max 3MB)
+                        </p>
+                        <h5>Caricamento in corso...</h5>
+                        <p>La liberatoria sta caricando</p>
+                      </div>
+                    </form>
+                  ) : !liberatoriaFirmata ? (
+                    <form 
+                      className="upload-dragdrop" 
+                      onDragOver={handleLibератоriaDragOver}
+                      onDrop={handleLibератоriaDrop}
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      <div className="upload-dragdrop-image">
+                        <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
+                        <div className="upload-dragdrop-loading">
+                          <div className="progress-donut" data-bs-progress-donut></div>
+                        </div>
+                        <div className="upload-dragdrop-success">
+                          <svg className="icon" aria-hidden="true">
+                            <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="upload-dragdrop-text">
+                        <p className="upload-dragdrop-weight">
+                          <svg className="icon icon-xs" aria-hidden="true">
+                            <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
+                          </svg> PDF (max 3MB)
+                        </p>
+                        <h5>Trascina la Liberatoria Firmata per caricarla</h5>
+                        <p>
+                          oppure{' '}
+                          <input
+                            type="file"
+                            onChange={handleLiberatoriaUpload}
+                            accept=".pdf"
+                            className="upload-dragdrop-input"
+                            id="liberatoria-upload"
+                          />
+                          <label htmlFor="liberatoria-upload">selezionala dal dispositivo</label>
+                        </p>
+                      </div>
+                    </form>
                   ) : (
-                    <div className="flex items-center justify-between bg-yellow-100 p-4 rounded-lg">
-                      <span className="text-sm font-medium text-yellow-900 truncate">
-                        {documento.name}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={removeDocumento}
-                        className="text-yellow-700 hover:text-yellow-900"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
+                    <form 
+                      className="upload-dragdrop success" 
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      <div className="upload-dragdrop-image">
+                        <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
+                        <div className="upload-dragdrop-loading">
+                          <div className="progress-donut" data-bs-progress-donut></div>
+                        </div>
+                        <div className="upload-dragdrop-success">
+                          <svg className="icon" aria-hidden="true">
+                            <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="upload-dragdrop-text">
+                        <p className="upload-dragdrop-weight">
+                          <svg className="icon icon-xs" aria-hidden="true">
+                            <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
+                          </svg> PDF ({(liberatoriaFirmata.size / 1024 / 1024).toFixed(2)}MB)
+                        </p>
+                        <h5>{liberatoriaFirmata.name}</h5>
+                        <p>Liberatoria caricata con successo</p>
+                        <button
+                          type="button"
+                          onClick={removeLiberatoria}
+                          className="btn btn-sm btn-danger mt-2"
+                        >
+                          <X size={16} className="me-1" />
+                          Rimuovi
+                        </button>
+                      </div>
+                    </form>
                   )}
                 </div>
               )}
 
               {/* Submit Buttons Step 2 */}
-              <div className="flex gap-4 pt-4">
+              <div className="d-flex gap-3 pt-3">
                 <button
+                  type="button"
                   onClick={() => setCurrentStep(1)}
-                  className="btn-secondary"
+                  className="btn btn-outline-primary"
                 >
                   Torna Indietro
                 </button>
                 <button
+                  type="button"
                   onClick={handleStep2Submit}
                   disabled={!allegato1Firmato}
-                  className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn btn-primary flex-fill"
                 >
                   Continua allo Step 3
                 </button>
@@ -847,92 +1076,99 @@ export default function RegistrazionePage() {
 
           {/* Step 3: Upload Foto */}
           {currentStep === 3 && (
-            <div className="space-y-6">
-              {/* Info completamento steps precedenti */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="font-bold text-green-900 mb-1">Dati e Documenti Completati</h3>
-                    <p className="text-sm text-green-800">
-                      Hai completato la registrazione e caricato l&apos;Allegato 1 firmato.
-                      Ora carica le tue fotografie per completare la candidatura.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
+            <div>
               {/* Upload Immagini */}
-              <div>
-                <label className="label">
-                  Carica le tue Foto * (max {MAX_IMAGES}, 3MB ciascuna)
-                </label>
-                <p className="text-sm text-gray-600 mb-4">
-                  Hai caricato {images.length} di {MAX_IMAGES} foto
+              <div className="bg-light border rounded p-4 mb-4">
+                <h3 className="h5 fw-bold mb-3">
+                  Carica le tue Fotografie
+                </h3>
+                <p className="mb-3">
+                  Puoi caricare fino a {MAX_IMAGES} fotografie (massimo 3MB ciascuna, formati: JPG, PNG, WebP).
+                </p>
+                <p className="small text-muted mb-3">
+                  <strong>Hai caricato {images.length} di {MAX_IMAGES} foto</strong>
                 </p>
 
-                {images.length < MAX_IMAGES && (
-                  <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-primary-300 rounded-lg cursor-pointer hover:bg-primary-50 transition-colors mb-4">
-                    <Upload className="w-10 h-10 text-primary-600 mb-2" />
-                    <span className="text-sm text-primary-700 font-medium">
-                      Clicca per caricare le foto
-                    </span>
-                    <span className="text-xs text-gray-500 mt-1">JPG, PNG o WebP</span>
-                    <input
-                      type="file"
-                      onChange={handleImageUpload}
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                      multiple
-                      className="hidden"
-                    />
-                  </label>
-                )}
+                <form method="post" action="" encType="multipart/form-data">
+                  {images.length < MAX_IMAGES && (
+                    <>
+                      <input 
+                        type="file" 
+                        name="upload-images" 
+                        id="upload-images" 
+                        className="upload" 
+                        multiple 
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        onChange={handleImageUpload}
+                      />
+                      <label htmlFor="upload-images" className="btn btn-primary">
+                        <svg className="icon icon-sm" aria-hidden="true">
+                          <use href="/bootstrap-italia/svg/sprites.svg#it-upload"></use>
+                        </svg>
+                        <span>Foto</span>
+                      </label>
+                    </>
+                  )}
 
-                {images.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {images.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={URL.createObjectURL(image)}
-                          alt={`Preview ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                        <p className="text-xs text-gray-600 mt-1 truncate">{image.name}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                  {images.length > 0 && (
+                    <ul className="upload-file-list upload-file-list-image mt-4">
+                      {images.map((image, index) => (
+                        <li key={index} className="upload-file success">
+                          <div className="upload-image">
+                            <img 
+                              src={URL.createObjectURL(image)} 
+                              alt={`Preview ${image.name}`}
+                            />
+                          </div>
+                          <p>
+                            <span className="visually-hidden">Immagine caricata:</span>
+                            {image.name}{' '}
+                            <span className="upload-file-weight">
+                              {(image.size / 1024 / 1024).toFixed(2)} MB
+                            </span>
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                          >
+                            <span className="visually-hidden">
+                              Elimina immagine {image.name}
+                            </span>
+                            <svg className="icon" aria-hidden="true">
+                              <use href="/bootstrap-italia/svg/sprites.svg#it-close"></use>
+                            </svg>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </form>
               </div>
 
               {submitError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div className="alert alert-danger">
                   {submitError}
                 </div>
               )}
 
               {/* Submit Buttons Step 3 */}
-              <div className="flex gap-4 pt-4">
+              <div className="d-flex gap-3 pt-3">
                 <button
+                  type="button"
                   onClick={() => setCurrentStep(2)}
-                  className="btn-secondary"
+                  className="btn btn-outline-primary"
                 >
                   Torna Indietro
                 </button>
                 <button
+                  type="button"
                   onClick={onSubmitFinal}
                   disabled={isSubmitting || images.length === 0}
-                  className="btn-primary flex-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn btn-primary flex-fill d-flex align-items-center justify-content-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <Loader2 size={20} className="spinner-border spinner-border-sm" />
                       Invio in corso...
                     </>
                   ) : (
@@ -942,6 +1178,7 @@ export default function RegistrazionePage() {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </main>

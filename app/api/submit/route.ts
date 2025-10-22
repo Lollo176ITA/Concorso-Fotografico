@@ -74,23 +74,23 @@ export async function POST(request: NextRequest) {
       size: allegato1.size,
     });
 
-    // Salva il documento di identità se presente (per minorenni)
-    const documento = formData.get('documento') as File | null;
-    if (isMinorenne && documento) {
-      const bytes = await documento.arrayBuffer();
+    // Salva la liberatoria se presente (per minorenni)
+    const liberatoria = formData.get('liberatoria') as File | null;
+    if (isMinorenne && liberatoria) {
+      const bytes = await liberatoria.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
-      const docPath = join(documentiDir, documento.name);
-      await writeFile(docPath, buffer);
+      const liberatoriaPath = join(documentiDir, `Liberatoria_firmata_${codiceFiscale}.pdf`);
+      await writeFile(liberatoriaPath, buffer);
 
       // Calcola MD5
       const wordArray = CryptoJS.lib.WordArray.create(buffer);
       const hash = CryptoJS.MD5(wordArray).toString();
       
       fileHashes.push({
-        filename: `documenti/${documento.name}`,
+        filename: `documenti/Liberatoria_firmata_${codiceFiscale}.pdf`,
         hash,
-        size: documento.size,
+        size: liberatoria.size,
       });
     }
 
