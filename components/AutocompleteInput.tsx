@@ -45,9 +45,27 @@ export default function AutocompleteInput({
     onChange(inputValue);
     
     if (inputValue.length > 0) {
-      const filtered = options.filter((option) =>
-        option.toLowerCase().includes(inputValue.toLowerCase())
-      );
+      const searchTerm = inputValue.toLowerCase();
+      const filtered = options
+        .filter((option) => option.toLowerCase().includes(searchTerm))
+        .sort((a, b) => {
+          const aLower = a.toLowerCase();
+          const bLower = b.toLowerCase();
+          
+          // Corrispondenza esatta ha massima priorità
+          if (aLower === searchTerm) return -1;
+          if (bLower === searchTerm) return 1;
+          
+          // Inizia con il termine cercato ha seconda priorità
+          const aStarts = aLower.startsWith(searchTerm);
+          const bStarts = bLower.startsWith(searchTerm);
+          if (aStarts && !bStarts) return -1;
+          if (!aStarts && bStarts) return 1;
+          
+          // Ordine alfabetico per il resto
+          return a.localeCompare(b, 'it');
+        });
+      
       setFilteredOptions(filtered);
       setIsOpen(true);
       setHighlightedIndex(-1);
@@ -102,9 +120,27 @@ export default function AutocompleteInput({
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => {
             if (value.length > 0) {
-              const filtered = options.filter((option) =>
-                option.toLowerCase().includes(value.toLowerCase())
-              );
+              const searchTerm = value.toLowerCase();
+              const filtered = options
+                .filter((option) => option.toLowerCase().includes(searchTerm))
+                .sort((a, b) => {
+                  const aLower = a.toLowerCase();
+                  const bLower = b.toLowerCase();
+                  
+                  // Corrispondenza esatta ha massima priorità
+                  if (aLower === searchTerm) return -1;
+                  if (bLower === searchTerm) return 1;
+                  
+                  // Inizia con il termine cercato ha seconda priorità
+                  const aStarts = aLower.startsWith(searchTerm);
+                  const bStarts = bLower.startsWith(searchTerm);
+                  if (aStarts && !bStarts) return -1;
+                  if (!aStarts && bStarts) return 1;
+                  
+                  // Ordine alfabetico per il resto
+                  return a.localeCompare(b, 'it');
+                });
+              
               setFilteredOptions(filtered);
               setIsOpen(true);
             }
