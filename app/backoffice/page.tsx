@@ -18,7 +18,6 @@ interface Submission {
   residenzaComune: string;
   residenzaIndirizzo: string;
   dipendente: string;
-  isMinorenne: boolean;
   timestamp: string;
   imagesCount: number;
   hasLiberatoria: boolean;
@@ -55,37 +54,37 @@ export default function AdminPage() {
       return;
     }
 
+    const fetchSubmissions = async (token: string) => {
+      setIsLoading(true);
+      setError('');
+
+      try {
+        const response = await fetch('/api/backoffice/submissions', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            router.push('/login');
+            return;
+          }
+          throw new Error('Errore nel recupero delle candidature');
+        }
+
+        const data = await response.json();
+        setSubmissions(data.submissions);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Errore durante il caricamento');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchSubmissions(token);
   }, [router]);
-
-  const fetchSubmissions = async (token: string) => {
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const response = await fetch('/api/backoffice/submissions', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem('adminToken');
-          router.push('/login');
-          return;
-        }
-        throw new Error('Errore nel recupero delle candidature');
-      }
-
-      const data = await response.json();
-      setSubmissions(data.submissions);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Errore durante il caricamento');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -250,9 +249,6 @@ export default function AdminPage() {
                       <tr key={submission.codiceFiscale}>
                         <td className="fw-medium">
                           {submission.nome} {submission.cognome}
-                          {submission.isMinorenne && (
-                            <span> (Minorenne)</span>
-                          )}
                         </td>
                         <td>{submission.email}</td>
                         <td>{submission.codiceFiscale}</td>
@@ -385,6 +381,7 @@ export default function AdminPage() {
                               style={{ cursor: 'pointer', paddingTop: '100%', overflow: 'hidden', borderRadius: '8px', background: '#f0f0f0' }}
                               onClick={() => handleOpenLightbox(index)}
                             >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={`${image.path}?token=${localStorage.getItem('adminToken')}`}
                                 alt={image.name}

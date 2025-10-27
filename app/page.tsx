@@ -18,7 +18,7 @@ export default function Home() {
                         <use href="/bootstrap-italia/svg/sprites.svg#it-user"></use>
                       </svg>
                     </span>
-                    <span className="d-none d-lg-block">Accedi al backoffice</span>
+                    <span className="d-none d-lg-block">Accedi all&apos;Area Riservata</span>
                   </Link>
                 </div>
               </div>
@@ -33,10 +33,6 @@ export default function Home() {
           <div className="row justify-content-center">
             <div className="col-lg-10">
               <div className="hero-content text-center text-white py-5">
-                <div className="d-inline-flex align-items-center justify-content-center rounded-circle mb-4" 
-                     style={{width: '80px', height: '80px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)'}}>
-                  <Camera size={40} />
-                </div>
                 <h1 className="display-1 fw-bold mb-4">
                   Scattiamo in Provincia
                 </h1>
@@ -49,48 +45,6 @@ export default function Home() {
                 <Link href="/registrazione" className="btn btn-primary btn-lg">
                   Partecipa Gratuitamente
                 </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section className="py-5 bg-white">
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-lg-10">
-              <h2 className="display-4 fw-bold text-center mb-5">
-                Il Concorso
-              </h2>
-              <div className="fs-5 lh-lg">
-                <p className="mb-4">
-                  La <strong>Città metropolitana di Roma Capitale</strong> promuove la prima edizione del concorso fotografico 
-                  <strong> &quot;Scattiamo in Provincia&quot;</strong>, un invito aperto a tutti gli appassionati di fotografia – 
-                  dilettanti e professionisti – a raccontare attraverso le immagini la ricchezza e la varietà del territorio metropolitano.
-                </p>
-                <p className="mb-4">
-                  <strong>Borghi, paesaggi, mestieri, sapori, tradizioni, monumenti:</strong> 120 Comuni che compongono un mosaico 
-                  di storia e identità, di natura e cultura. Ogni partecipante potrà immortalare scorci e atmosfere capaci di 
-                  restituire l&apos;anima autentica delle nostre comunità.
-                </p>
-                <p className="mb-4">
-                  Le sezioni del concorso spaziano dal <strong>tema libero</strong> ai <strong>paesaggi</strong>, dalle <strong>arti 
-                  e mestieri</strong> all&apos;<strong>enogastronomia</strong>, fino a <strong>piazze e monumenti</strong>.
-                </p>
-                <p className="mb-4">
-                  Le fotografie più rappresentative saranno selezionate da una Commissione e saranno <strong>esposte in mostre 
-                  fotografiche presso Palazzo Valentini</strong> e altre sedi istituzionali, oltre a essere pubblicate sui canali 
-                  digitali della Città metropolitana, contribuendo alla promozione del nuovo portale turistico dedicato al territorio.
-                </p>
-                <div className="alert alert-info border-start border-primary border-4 my-5">
-                  <p className="fs-5 fw-semibold mb-2">
-                    La partecipazione è gratuita e aperta anche ai minorenni (con autorizzazione dei genitori).
-                  </p>
-                  <p className="fst-italic mb-0">
-                    Scattare, partecipare, raccontare: ogni fotografia è un gesto di amore verso la nostra provincia.
-                  </p>
-                </div>
               </div>
             </div>
           </div>
@@ -112,9 +66,9 @@ export default function Home() {
                        style={{width: '64px', height: '64px', background: 'rgba(0, 102, 204, 0.1)'}}>
                     <Award size={32} color="#0066CC" />
                   </div>
-                  <h3 className="h5 fw-bold mb-3">Esposizione e Visibilità</h3>
+                  <h3 className="h5 fw-bold mb-3">Vinci Targhe e Visibilità</h3>
                   <p className="text-muted">
-                    Le tue foto saranno esposte a Palazzo Valentini e pubblicate sui canali ufficiali della Città metropolitana.
+                    I vincitori di ogni sezione riceveranno una targa di premiazione e le foto migliori saranno esposte in mostre a Palazzo Valentini e altre sedi istituzionali.
                   </p>
                 </div>
               </div>
@@ -127,9 +81,9 @@ export default function Home() {
                        style={{width: '64px', height: '64px', background: 'rgba(0, 102, 204, 0.1)'}}>
                     <Users size={32} color="#0066CC" />
                   </div>
-                  <h3 className="h5 fw-bold mb-3">Valorizza il Territorio</h3>
+                  <h3 className="h5 fw-bold mb-3">Promuovi il Territorio</h3>
                   <p className="text-muted">
-                    Contribuisci alla promozione del territorio metropolitano e racconta la bellezza dei nostri borghi.
+                    Le tue opere saranno pubblicate sui canali ufficiali della Città metropolitana, contribuendo a valorizzare la bellezza dei nostri 120 Comuni.
                   </p>
                 </div>
               </div>
@@ -144,7 +98,7 @@ export default function Home() {
                   </div>
                   <h3 className="h5 fw-bold mb-3">Partecipazione Gratuita</h3>
                   <p className="text-muted">
-                    Carica fino a 24 foto gratuitamente. Aperto a dilettanti, professionisti e minorenni.
+                    Il concorso è aperto a tutti, professionisti e dilettanti. Carica fino a 3 foto per ognuna delle 7 sezioni tematiche.
                   </p>
                 </div>
               </div>
@@ -167,10 +121,13 @@ export default function Home() {
                   <div className="d-flex align-items-start gap-3">
                     <div className="step-circle">1</div>
                     <div>
-                      <h3 className="h5 fw-bold mb-2">Registrati Gratuitamente</h3>
+                      <h3 className="h5 fw-bold mb-2">Leggi il Regolamento</h3>
                       <p className="text-muted">
-                        Compila il modulo di registrazione con i tuoi dati personali e indirizzo email.
+                        Prendi visione del regolamento completo per conoscere tutti i dettagli, le sezioni del concorso e i requisiti tecnici delle fotografie.
                       </p>
+                      <Link href="/Regolamento.pdf" target="_blank" className="btn btn-outline-primary btn-sm mt-2">
+                        Leggi il Regolamento
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -179,9 +136,9 @@ export default function Home() {
                   <div className="d-flex align-items-start gap-3">
                     <div className="step-circle">2</div>
                     <div>
-                      <h3 className="h5 fw-bold mb-2">Carica le tue Fotografie</h3>
+                      <h3 className="h5 fw-bold mb-2">Prepara e Carica le Foto</h3>
                       <p className="text-muted">
-                        Seleziona fino a 24 delle tue migliori fotografie che raccontano il territorio metropolitano (max 3MB ciascuna).
+                        Registrati sulla piattaforma, scegli le tue foto migliori (massimo 3 per sezione, formato JPG orizzontale, max 3MB) e caricale seguendo le istruzioni.
                       </p>
                     </div>
                   </div>

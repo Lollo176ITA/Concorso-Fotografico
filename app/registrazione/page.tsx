@@ -7,7 +7,6 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { ArrowLeft, Upload, X, CheckCircle, Loader2, Download, AlertCircle } from 'lucide-react';
 import { generateAllegato1PDF } from '@/utils/generatePDF';
-import { generateLiberatoriaPDF } from '@/utils/generateLiberatoriaPDF';
 import AutocompleteInput from '@/components/AutocompleteInput';
 import { tuttiComuni, comuniRomaMetropolitana } from '@/utils/comuni';
 import { 
@@ -58,8 +57,6 @@ export default function RegistrazionePage() {
   const [currentStep, setCurrentStep] = useState(1); // 1: Dati, 2: Allegato 1, 3: Foto
   const [images, setImages] = useState<File[]>([]);
   const [allegato1Firmato, setAllegato1Firmato] = useState<File | null>(null);
-  const [liberatoriaFirmata, setLiberatoriaFirmata] = useState<File | null>(null);
-  const [isUploadingLiberatoria, setIsUploadingLiberatoria] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -86,19 +83,6 @@ export default function RegistrazionePage() {
   const dataNascita = watch('dataNascita');
   const codiceFiscale = watch('codiceFiscale');
   const luogoNascita = watch('luogoNascita');
-
-  // Calcola se è minorenne
-  const isMinorenne = () => {
-    if (!dataNascita) return false;
-    const birthDate = new Date(dataNascita);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      return age - 1 < 18;
-    }
-    return age < 18;
-  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -144,11 +128,6 @@ export default function RegistrazionePage() {
       return;
     }
 
-    if (isMinorenne() && !liberatoriaFirmata) {
-      alert('I minorenni devono caricare la liberatoria firmata dal genitore/tutore!');
-      return;
-    }
-
     setIsSubmitting(true);
     setSubmitError('');
 
@@ -164,15 +143,10 @@ export default function RegistrazionePage() {
       submitFormData.append('residenzaIndirizzo', formData.residenzaIndirizzo);
       submitFormData.append('telefono', formData.telefono);
       submitFormData.append('dipendente', formData.dipendente);
-      submitFormData.append('isMinorenne', isMinorenne().toString());
 
       images.forEach((image) => {
         submitFormData.append('images', image);
       });
-
-      if (liberatoriaFirmata) {
-        submitFormData.append('liberatoria', liberatoriaFirmata);
-      }
 
       submitFormData.append('allegato1', allegato1Firmato);
 
@@ -184,7 +158,14 @@ export default function RegistrazionePage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Errore durante l\'invio');
+        // Gestisci specificamente l'errore di codice fiscale duplicato
+        if (response.status === 409) {
+          setSubmitError('Questo codice fiscale ha già inviato una candidatura. Ogni partecipante può inviare una sola candidatura.');
+        } else {
+          throw new Error(result.error || 'Errore durante l\'invio');
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
       }
 
       setSubmitSuccess(true);
@@ -192,6 +173,7 @@ export default function RegistrazionePage() {
     } catch (error) {
       console.error('Errore:', error);
       setSubmitError(error instanceof Error ? error.message : 'Errore durante l\'invio del form');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setIsSubmitting(false);
     }
@@ -200,18 +182,6 @@ export default function RegistrazionePage() {
   const handleDownloadPDF = () => {
     if (formData) {
       generateAllegato1PDF(formData);
-    }
-  };
-
-  const handleDownloadLiberatoria = () => {
-    if (formData) {
-      generateLiberatoriaPDF({
-        nomeMinore: formData.nome,
-        cognomeMinore: formData.cognome,
-        codiceFiscale: formData.codiceFiscale,
-        dataNascita: formData.dataNascita,
-        luogoNascita: formData.luogoNascita,
-      });
     }
   };
 
@@ -229,11 +199,6 @@ export default function RegistrazionePage() {
   const handleStep2Submit = () => {
     if (!allegato1Firmato) {
       alert('Devi caricare il Modulo Concorso Fotografico firmato prima di continuare!');
-      return;
-    }
-    
-    if (isMinorenne() && !liberatoriaFirmata) {
-      alert('I minorenni devono caricare la liberatoria firmata dal genitore/tutore!');
       return;
     }
 
@@ -284,50 +249,6 @@ export default function RegistrazionePage() {
   const removeAllegato1 = () => {
     setAllegato1Firmato(null);
     setIsUploadingAllegato(false);
-  };
-
-  const processLiberatoriaFile = (file: File) => {
-    if (file.type !== 'application/pdf') {
-      alert('Il file deve essere in formato PDF');
-      return;
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      alert('Il file è troppo grande. Massimo 3MB');
-      return;
-    }
-    
-    setIsUploadingLiberatoria(true);
-    setTimeout(() => {
-      setLiberatoriaFirmata(file);
-      setIsUploadingLiberatoria(false);
-    }, 1500);
-  };
-
-  const handleLiberatoriaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      processLiberatoriaFile(file);
-    }
-  };
-
-  const handleLibератоriaDragOver = (e: React.DragEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleLibератоriaDrop = (e: React.DragEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      processLiberatoriaFile(file);
-    }
-  };
-
-  const removeLiberatoria = () => {
-    setLiberatoriaFirmata(null);
-    setIsUploadingLiberatoria(false);
   };
 
   // Effetto per la validazione del codice fiscale in tempo reale
@@ -892,130 +813,6 @@ export default function RegistrazionePage() {
                   </form>
                 )}
               </div>
-
-              {/* Liberatoria per Minorenni */}
-              {isMinorenne() && (
-                <div className="bg-light border rounded p-4 mb-4">
-                  <h3 className="h5 fw-bold mb-3">
-                    Liberatoria per la Partecipazione di Minori
-                  </h3>
-                  <p className="mb-3">
-                    Essendo minorenne, è necessario scaricare e far firmare la liberatoria al genitore/tutore. 
-                    Scarica il documento precompilato, fallo firmare e ricaricalo qui sotto.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleDownloadLiberatoria}
-                    className="btn btn-primary d-inline-flex align-items-center gap-2 mb-4"
-                  >
-                    <Download size={20} />
-                    Scarica Liberatoria Minorenne
-                  </button>
-
-                  <hr className="my-4" />
-                  
-                  {isUploadingLiberatoria ? (
-                    <form 
-                      className="upload-dragdrop loading" 
-                      onDragOver={handleLibератоriaDragOver}
-                      onSubmit={(e) => e.preventDefault()}
-                    >
-                      <div className="upload-dragdrop-image">
-                        <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
-                        <div className="upload-dragdrop-loading">
-                          <div className="progress-donut" data-bs-progress-donut></div>
-                        </div>
-                        <div className="upload-dragdrop-success">
-                          <svg className="icon" aria-hidden="true">
-                            <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="upload-dragdrop-text">
-                        <p className="upload-dragdrop-weight">
-                          <svg className="icon icon-xs" aria-hidden="true">
-                            <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
-                          </svg> PDF (max 3MB)
-                        </p>
-                        <h5>Caricamento in corso...</h5>
-                        <p>La liberatoria sta caricando</p>
-                      </div>
-                    </form>
-                  ) : !liberatoriaFirmata ? (
-                    <form 
-                      className="upload-dragdrop" 
-                      onDragOver={handleLibератоriaDragOver}
-                      onDrop={handleLibератоriaDrop}
-                      onSubmit={(e) => e.preventDefault()}
-                    >
-                      <div className="upload-dragdrop-image">
-                        <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
-                        <div className="upload-dragdrop-loading">
-                          <div className="progress-donut" data-bs-progress-donut></div>
-                        </div>
-                        <div className="upload-dragdrop-success">
-                          <svg className="icon" aria-hidden="true">
-                            <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="upload-dragdrop-text">
-                        <p className="upload-dragdrop-weight">
-                          <svg className="icon icon-xs" aria-hidden="true">
-                            <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
-                          </svg> PDF (max 3MB)
-                        </p>
-                        <h5>Trascina la Liberatoria Firmata per caricarla</h5>
-                        <p>
-                          oppure{' '}
-                          <input
-                            type="file"
-                            onChange={handleLiberatoriaUpload}
-                            accept=".pdf"
-                            className="upload-dragdrop-input"
-                            id="liberatoria-upload"
-                          />
-                          <label htmlFor="liberatoria-upload">selezionala dal dispositivo</label>
-                        </p>
-                      </div>
-                    </form>
-                  ) : (
-                    <form 
-                      className="upload-dragdrop success" 
-                      onSubmit={(e) => e.preventDefault()}
-                    >
-                      <div className="upload-dragdrop-image">
-                        <img src="/bootstrap-italia/assets/upload-drag-drop-icon.svg" alt="Icona caricamento" aria-hidden="true" />
-                        <div className="upload-dragdrop-loading">
-                          <div className="progress-donut" data-bs-progress-donut></div>
-                        </div>
-                        <div className="upload-dragdrop-success">
-                          <svg className="icon" aria-hidden="true">
-                            <use href="/bootstrap-italia/svg/sprites.svg#it-check"></use>
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="upload-dragdrop-text">
-                        <p className="upload-dragdrop-weight">
-                          <svg className="icon icon-xs" aria-hidden="true">
-                            <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
-                          </svg> PDF ({(liberatoriaFirmata.size / 1024 / 1024).toFixed(2)}MB)
-                        </p>
-                        <h5>{liberatoriaFirmata.name}</h5>
-                        <p>Liberatoria caricata con successo</p>
-                        <button
-                          type="button"
-                          onClick={removeLiberatoria}
-                          className="btn btn-sm btn-danger mt-2"
-                        >
-                          <X size={16} className="me-1" />
-                          Rimuovi
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </div>
-              )}
 
               {/* Submit Buttons Step 2 */}
               <div className="d-flex gap-3 pt-3">

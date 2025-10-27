@@ -73,7 +73,6 @@ export async function GET(request: NextRequest) {
             residenzaComune: partecipante.residenzaComune,
             residenzaIndirizzo: partecipante.residenzaIndirizzo,
             dipendente: partecipante.dipendente,
-            isMinorenne: partecipante.isMinorenne,
             timestamp: dati.timestamp,
             imagesCount,
             hasLiberatoria,

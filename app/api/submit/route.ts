@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir, access } from 'fs/promises';
 import { join } from 'path';
 import CryptoJS from 'crypto-js';
 
@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
     const residenzaIndirizzo = formData.get('residenzaIndirizzo') as string;
     const telefono = formData.get('telefono') as string;
     const dipendente = formData.get('dipendente') as string;
-    const isMinorenne = formData.get('isMinorenne') === 'true';
 
     // Validazione base
     if (!nome || !cognome || !email || !codiceFiscale || !dataNascita || !luogoNascita || !residenzaComune || !residenzaIndirizzo || !telefono || !dipendente) {
@@ -38,6 +37,18 @@ export async function POST(request: NextRequest) {
     // Crea la struttura delle cartelle
     const baseDir = join(process.cwd(), 'submissions');
     const userDir = join(baseDir, codiceFiscale);
+
+    // Verifica se il codice fiscale è già stato utilizzato
+    try {
+      await access(userDir);
+      // Se non viene lanciata un'eccezione, la directory esiste già
+      return NextResponse.json(
+        { error: 'Questo codice fiscale ha già inviato una candidatura' },
+        { status: 409 } // 409 Conflict
+      );
+    } catch (error) {
+      // La directory non esiste, si può procedere
+    }
     const documentiDir = join(userDir, 'documenti');
     const immaginiDir = join(userDir, 'immagini');
 
@@ -74,9 +85,9 @@ export async function POST(request: NextRequest) {
       size: allegato1.size,
     });
 
-    // Salva la liberatoria se presente (per minorenni)
+    // Salva la liberatoria se presente
     const liberatoria = formData.get('liberatoria') as File | null;
-    if (isMinorenne && liberatoria) {
+    if (liberatoria) {
       const bytes = await liberatoria.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
@@ -139,7 +150,6 @@ Data di Nascita: ${dataNascita}
 Luogo di Nascita: ${luogoNascita}
 Residenza: ${residenzaComune}, ${residenzaIndirizzo}
 Telefono: ${telefono}
-Minorenne: ${isMinorenne ? 'Sì' : 'No'}
 Dipendente: ${dipendente === 'no' ? 'No' : dipendente === 'cittametropolitana' ? 'Città metropolitana di Roma Capitale' : 'Capitale Lavoro SpA'}
 
 DATA E ORA INVIO:
@@ -182,7 +192,6 @@ Totale file: ${fileHashes.length}
         residenzaIndirizzo,
         telefono,
         dipendente,
-        isMinorenne,
       },
       timestamp,
       files: fileHashes,
