@@ -4,7 +4,7 @@ import path from 'path';
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ codiceFiscale: string; type: string; filename: string }> }
+  context: { params: Promise<{ codiceFiscale: string; type: string; path: string[] }> }
 ) {
   try {
     // Verifica autenticazione - supporta sia header che query param
@@ -28,7 +28,7 @@ export async function GET(
     }
 
     const params = await context.params;
-    const { codiceFiscale, type, filename } = params;
+    const { codiceFiscale, type, path: pathSegments } = params;
 
     // Valida il tipo (solo immagini o documenti)
     if (type !== 'immagini' && type !== 'documenti') {
@@ -38,19 +38,35 @@ export async function GET(
       );
     }
 
+    // Decodifica tutti i segmenti del path
+    const decodedSegments = pathSegments.map(segment => decodeURIComponent(segment));
+
+    // Costruisce il path completo
     const filePath = path.join(
       process.cwd(),
       'submissions',
       codiceFiscale,
       type,
-      filename
+      ...decodedSegments
     );
+
+    console.log('Tentativo di accesso al file:', filePath);
 
     // Verifica che il file esista
     if (!fs.existsSync(filePath)) {
+      console.error('File non trovato:', filePath);
       return NextResponse.json(
-        { error: 'File non trovato' },
+        { error: 'File non trovato', requestedPath: decodedSegments.join('/') },
         { status: 404 }
+      );
+    }
+
+    // Verifica che sia un file e non una directory
+    const stats = fs.statSync(filePath);
+    if (!stats.isFile()) {
+      return NextResponse.json(
+        { error: 'Il path specificato non è un file' },
+        { status: 400 }
       );
     }
 
@@ -58,6 +74,7 @@ export async function GET(
     const fileBuffer = fs.readFileSync(filePath);
     
     // Determina il content type
+    const filename = decodedSegments[decodedSegments.length - 1];
     let contentType = 'application/octet-stream';
     const ext = path.extname(filename).toLowerCase();
     

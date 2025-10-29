@@ -58,11 +58,7 @@ export async function POST(request: NextRequest) {
     await mkdir(documentiDir, { recursive: true });
     await mkdir(immaginiDir, { recursive: true });
 
-    // Crea le sottocartelle per ogni categoria di foto
-    const categorie = ['TL', 'RA', 'WL', 'PA', 'ME', 'AM', 'EN'];
-    for (const categoria of categorie) {
-      await mkdir(join(immaginiDir, categoria), { recursive: true });
-    }
+    // Le sottocartelle per le categorie verranno create solo se necessario
 
     // Array per salvare gli hash MD5
     const fileHashes: { filename: string; hash: string; size: number }[] = [];
@@ -144,8 +140,10 @@ export async function POST(request: NextRequest) {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
-      // Salva nella sottocartella della categoria
+      // Crea la sottocartella della categoria solo se necessario
       const categoriaDir = join(immaginiDir, metadata.categoria);
+      await mkdir(categoriaDir, { recursive: true });
+      
       const imagePath = join(categoriaDir, image.name);
       await writeFile(imagePath, buffer);
 

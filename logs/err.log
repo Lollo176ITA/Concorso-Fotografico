@@ -261,3 +261,319 @@ Require stack:
 2025-10-29 09:26:33 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
 2025-10-29 09:26:33 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
 2025-10-29 09:26:33 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:33:00 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:33:00 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:00 +01:00: Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:00 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:00 +01:00: Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:00 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:00 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:33:00 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:00 +01:00: Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:00 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:01 +01:00: Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:01 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:33:49 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:34:22 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:34:22 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:34:23 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('category' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:39:06 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:39:06 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:39:06 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:39:06 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:42:15 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:42:15 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:42:15 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:42:16 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:48:26 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:48:27 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00: Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00: Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00: Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00: Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:27 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:48:37 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('filename' !== 'categoria').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:21 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:21 +01:00: Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:21 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:21 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:53:21 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:53:22 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:22 +01:00: Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:22 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:22 +01:00: Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:22 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:22 +01:00: Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:22 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:25 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:26 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:26 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:27 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:27 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:53:27 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:55:22 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00: Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00: Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00: Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at handleSlug (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:129:53)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:190:17)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode._insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:201:40)
+    at UrlNode.insert (/gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:25:14)
+    at /gfstorage/www/siti/concorso/Concorso-Fotografico/node_modules/next/dist/shared/lib/router/utils/sorted-routes.js:224:46
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00: Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:22 +01:00:  ⨯ unhandledRejection:  Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:31 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:31 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:32 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:32 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:55:45 +01:00:  ⨯ Error: You cannot use different slug names for the same dynamic path ('categoria' !== 'filename').
+    at Array.forEach (<anonymous>)
+2025-10-29 15:56:33 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:56:33 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:56:33 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+2025-10-29 15:56:33 +01:00:  ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.

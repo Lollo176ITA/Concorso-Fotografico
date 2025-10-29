@@ -35,19 +35,36 @@ export async function GET(
       );
     }
 
-    // Leggi le immagini
+    // Leggi le immagini (ora organizzate in sottocartelle per categoria)
     const imagesPath = path.join(submissionPath, 'immagini');
-    const images: { name: string; path: string; size: number }[] = [];
+    const images: { name: string; path: string; size: number; categoria?: string }[] = [];
     
     if (fs.existsSync(imagesPath)) {
-      const files = fs.readdirSync(imagesPath);
-      files.forEach((file) => {
-        const filePath = path.join(imagesPath, file);
-        const stat = fs.statSync(filePath);
-        if (stat.isFile()) {
+      const items = fs.readdirSync(imagesPath);
+      items.forEach((item) => {
+        const itemPath = path.join(imagesPath, item);
+        const stat = fs.statSync(itemPath);
+        
+        if (stat.isDirectory()) {
+          // È una cartella di categoria, leggi i file al suo interno
+          const categoryFiles = fs.readdirSync(itemPath);
+          categoryFiles.forEach((file) => {
+            const filePath = path.join(itemPath, file);
+            const fileStat = fs.statSync(filePath);
+            if (fileStat.isFile()) {
+              images.push({
+                name: file,
+                path: `/api/backoffice/files/${codiceFiscale}/immagini/${encodeURIComponent(item)}/${encodeURIComponent(file)}`,
+                size: fileStat.size,
+                categoria: item,
+              });
+            }
+          });
+        } else if (stat.isFile()) {
+          // File diretto nella cartella immagini (retrocompatibilità)
           images.push({
-            name: file,
-            path: `/api/backoffice/files/${codiceFiscale}/immagini/${encodeURIComponent(file)}`,
+            name: item,
+            path: `/api/backoffice/files/${codiceFiscale}/immagini/${encodeURIComponent(item)}`,
             size: stat.size,
           });
         }

@@ -28,6 +28,7 @@ interface MediaFile {
   name: string;
   path: string;
   size: number;
+  categoria?: string;
 }
 
 interface MediaData {
@@ -311,7 +312,7 @@ export default function AdminPage() {
                 ></button>
               </div>
               <div className="modal-body">
-                <div className="row g-3">
+                <div className="row g-1">
                   <div className="col-md-6">
                     <p className="mb-1 text-muted small">Nome Completo</p>
                     <p className="fw-semibold">
@@ -373,28 +374,62 @@ export default function AdminPage() {
                         <Loader2 size={30} className="spinner-border text-primary" />
                       </div>
                     ) : mediaData && mediaData.images.length > 0 ? (
-                      <div className="row g-2">
-                        {mediaData.images.map((image, index) => (
-                          <div key={index} className="col-6 col-md-4 col-lg-3">
-                            <div 
-                              className="position-relative" 
-                              style={{ cursor: 'pointer', paddingTop: '100%', overflow: 'hidden', borderRadius: '8px', background: '#f0f0f0' }}
-                              onClick={() => handleOpenLightbox(index)}
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={`${image.path}?token=${localStorage.getItem('adminToken')}`}
-                                alt={image.name}
-                                className="position-absolute top-0 start-0 w-100 h-100"
-                                style={{ objectFit: 'cover' }}
-                              />
-                              <div className="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-75 text-white p-1 text-center" style={{ fontSize: '0.7rem' }}>
-                                {image.name.length > 20 ? image.name.substring(0, 17) + '...' : image.name}
+                      (() => {
+                        // Raggruppa le immagini per categoria
+                        const imagesByCategory = mediaData.images.reduce((acc, image) => {
+                          const cat = image.categoria || 'Senza categoria';
+                          if (!acc[cat]) acc[cat] = [];
+                          acc[cat].push(image);
+                          return acc;
+                        }, {} as Record<string, typeof mediaData.images>);
+
+                        const categorieNames: Record<string, string> = {
+                          'TL': 'Tema libero',
+                          'RA': 'Ritratti ambientati',
+                          'WL': 'Flora e fauna',
+                          'PA': 'Fotografie panoramiche e luoghi di interesse',
+                          'ME': 'Piazze, monumenti ed edifici storici',
+                          'AM': 'Arti, mestieri e tradizioni',
+                          'EN': 'Enogastronomia',
+                        };
+
+                        return (
+                          <>
+                            {Object.entries(imagesByCategory).map(([categoria, images]) => (
+                              <div key={categoria} className="mb-4">
+                                <h6 className="small fw-bold text-primary mb-2">
+                                  {categorieNames[categoria] || categoria} ({images.length})
+                                </h6>
+                                <div className="row g-2">
+                                  {images.map((image, index) => {
+                                    const globalIndex = mediaData.images.indexOf(image);
+                                    return (
+                                      <div key={index} className="col-6 col-md-4 col-lg-3">
+                                        <div 
+                                          className="position-relative" 
+                                          style={{ cursor: 'pointer', paddingTop: '100%', overflow: 'hidden', borderRadius: '8px', background: '#f0f0f0' }}
+                                          onClick={() => handleOpenLightbox(globalIndex)}
+                                        >
+                                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                                          <img
+                                            src={`${image.path}?token=${localStorage.getItem('adminToken')}`}
+                                            alt={image.name}
+                                            className="position-absolute top-0 start-0 w-100 h-100"
+                                            style={{ objectFit: 'cover' }}
+                                          />
+                                          <div className="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-75 text-white p-1 text-center" style={{ fontSize: '0.7rem' }}>
+                                            {image.name.length > 20 ? image.name.substring(0, 17) + '...' : image.name}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                            ))}
+                          </>
+                        );
+                      })()
                     ) : (
                       <p className="text-muted">Nessuna fotografia caricata</p>
                     )}
