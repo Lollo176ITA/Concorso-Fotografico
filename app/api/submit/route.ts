@@ -58,6 +58,12 @@ export async function POST(request: NextRequest) {
     await mkdir(documentiDir, { recursive: true });
     await mkdir(immaginiDir, { recursive: true });
 
+    // Crea le sottocartelle per ogni categoria di foto
+    const categorie = ['TL', 'RA', 'WL', 'PA', 'ME', 'AM', 'EN'];
+    for (const categoria of categorie) {
+      await mkdir(join(immaginiDir, categoria), { recursive: true });
+    }
+
     // Array per salvare gli hash MD5
     const fileHashes: { filename: string; hash: string; size: number }[] = [];
 
@@ -115,11 +121,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    for (const image of images) {
+    // Estrai i metadati delle immagini
+    const imageMetadata: { categoria: string; comune: string; titolo: string; originalName: string }[] = [];
+    let metadataIndex = 0;
+    while (formData.has(`imageMetadata[${metadataIndex}]`)) {
+      const metadata = JSON.parse(formData.get(`imageMetadata[${metadataIndex}]`) as string);
+      imageMetadata.push(metadata);
+      metadataIndex++;
+    }
+
+    for (let i = 0; i < images.length; i++) {
+      const image = images[i];
+      const metadata = imageMetadata[i];
+      
+      if (!metadata || !metadata.categoria) {
+        return NextResponse.json(
+          { error: 'Metadati immagine mancanti o non validi' },
+          { status: 400 }
+        );
+      }
+
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
-      const imagePath = join(immaginiDir, image.name);
+      // Salva nella sottocartella della categoria
+      const categoriaDir = join(immaginiDir, metadata.categoria);
+      const imagePath = join(categoriaDir, image.name);
       await writeFile(imagePath, buffer);
 
       // Calcola MD5
@@ -127,7 +154,7 @@ export async function POST(request: NextRequest) {
       const hash = CryptoJS.MD5(wordArray).toString();
       
       fileHashes.push({
-        filename: `immagini/${image.name}`,
+        filename: `immagini/${metadata.categoria}/${image.name}`,
         hash,
         size: image.size,
       });
