@@ -183,7 +183,7 @@ export default function Step2Documenti({ formData, onStepSubmit, onBack, allegat
                   <use href="/bootstrap-italia/svg/sprites.svg#it-file"></use>
                 </svg> PDF
               </p>
-              <h5>{allegato1Firmato.name}</h5>
+              <h5 className="text-break" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{allegato1Firmato.name}</h5>
               <p>
                 Caricamento completato - <button type="button" className="btn btn-link btn-sm text-danger p-0" onClick={removeAllegato1}>Rimuovi</button>
               </p>
