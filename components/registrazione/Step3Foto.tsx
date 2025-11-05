@@ -132,7 +132,7 @@ export default function Step3Foto({ onBack, onSubmit, images, setImages, isSubmi
               </div>
             </div>
 
-            <h5 className="h6 fw-bold mb-2">⚠️ Rinominazione Automatica</h5>
+            <h5 className="h6 fw-bold mb-2">Rinominazione Automatica</h5>
             <p className="small mb-0">I file caricati verranno automaticamente rinominati dal sistema seguendo il formato: <code>Cognome_Nome_Categoria_Comune_Titolo.jpg</code></p>
           </div>
         </div>

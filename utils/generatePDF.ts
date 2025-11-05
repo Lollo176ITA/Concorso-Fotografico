@@ -56,7 +56,7 @@ export async function generateAllegato1PDF(data: PartecipanteData): Promise<void
         img.src = '/logo.png';
       });
       
-      const logoWidth = 40;
+      const logoWidth = 60;
       const logoHeight = 20;
       const logoX = (pageWidth - logoWidth) / 2;
       doc.addImage(logoImg, 'PNG', logoX, yPos, logoWidth, logoHeight);
@@ -153,28 +153,38 @@ export async function generateAllegato1PDF(data: PartecipanteData): Promise<void
   const checkboxSize = 3;
   const checkboxMargin = margin + 5;
   
-  addText('Di non essere dipendente di Città metropolitana di Roma Capitale o di Capitale Lavoro SpA: __', margin, y);
+  const textNoDipendente = 'Di non essere dipendente di Città metropolitana di Roma Capitale o di Capitale Lavoro SpA: ';
+  addText(textNoDipendente, margin, y);
+  const checkboxXNoDip = margin + doc.getTextWidth(textNoDipendente);
+  addText('__', checkboxXNoDip, y);
   if (data.dipendente === 'no') {
     doc.setFont('helvetica', 'bold');
-    addText('X', pageWidth - margin - 10, y);
+    addText('X', checkboxXNoDip + 1, y);
+    doc.setFont('helvetica', 'normal');
   }
   y += 8;
 
   addText('Ovvero di essere dipendente:', margin, y);
   y += 6;
 
-  addText('di Città metropolitana di Roma Capitale __', checkboxMargin, y);
+  const textCittaMet = 'di Città metropolitana di Roma Capitale ';
+  addText(textCittaMet, checkboxMargin, y);
+  const checkboxXCitta = checkboxMargin + doc.getTextWidth(textCittaMet);
+  addText('__', checkboxXCitta, y);
   if (data.dipendente === 'cittametropolitana') {
     doc.setFont('helvetica', 'bold');
-    addText('X', pageWidth - margin - 10, y);
+    addText('X', checkboxXCitta + 1, y);
     doc.setFont('helvetica', 'normal');
   }
   y += 6;
 
-  addText('di Capitale Lavoro SpA __', checkboxMargin, y);
+  const textCapLavoro = 'di Capitale Lavoro SpA ';
+  addText(textCapLavoro, checkboxMargin, y);
+  const checkboxXCapLav = checkboxMargin + doc.getTextWidth(textCapLavoro);
+  addText('__', checkboxXCapLav, y);
   if (data.dipendente === 'capitalelavoro') {
     doc.setFont('helvetica', 'bold');
-    addText('X', pageWidth - margin - 10, y);
+    addText('X', checkboxXCapLav + 1, y);
     doc.setFont('helvetica', 'normal');
   }
   y += 10;

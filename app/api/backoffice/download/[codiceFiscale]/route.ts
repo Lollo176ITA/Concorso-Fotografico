@@ -58,7 +58,7 @@ export async function GET(
       });
     });
 
-    // Aggiungi tutti i file all'archivio
+    // Aggiungi tutti i file all'archivio (ricorsivamente per gestire le sottocartelle delle categorie)
     const addFolderToArchive = (folderPath: string, archivePath: string) => {
       if (!fs.existsSync(folderPath)) return;
 
@@ -69,6 +69,9 @@ export async function GET(
 
         if (stat.isFile()) {
           archive.file(filePath, { name: path.join(archivePath, file) });
+        } else if (stat.isDirectory()) {
+          // Se è una directory, esplora ricorsivamente
+          addFolderToArchive(filePath, path.join(archivePath, file));
         }
       });
     };
